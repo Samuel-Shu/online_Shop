@@ -1,0 +1,7 @@
+name: 'user-web'
+port: 7071
+user_srv:
+  host: '127.0.0.1'
+  port: 8081
+jwt:
+  key: '1oyJ~LbGx%$hoPa&iVsB'
