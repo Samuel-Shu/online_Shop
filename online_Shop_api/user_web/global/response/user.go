@@ -2,7 +2,7 @@ package response
 
 type UserResponse struct {
 	Id       int32  `json:"id"`
-	Mobile   string `json:"mobile"`
+	Email   string `json:"email"`
 	NickName string `json:"nickName"`
 	Birthday string `json:"birthday"`
 	Gender   string `json:"gender"`

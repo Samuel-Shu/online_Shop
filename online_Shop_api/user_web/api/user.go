@@ -6,8 +6,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"net/http"
@@ -69,24 +69,13 @@ func HandleValidatorError(c *gin.Context, err error) {
 }
 
 func GetUserList(c *gin.Context) {
-	//连接grpc服务
-	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvInfo.Host, global.ServerConfig.UserSrvInfo.Port), grpc.WithInsecure())
-	if err != nil {
-		zap.S().Errorw("[GetUserList] 连接【用户服务】失败",
-			"msg", err.Error(),
-		)
-	}
-
-	//生成grpc的client并调用接口
-	userSrvClient := proto.NewUserClient(userConn)
-
 	//从表单获取数据
 	pnStr := c.DefaultQuery("pn", "0")
 	pn, _ := strconv.Atoi(pnStr)
 	psizeStr := c.DefaultQuery("psize", "10")
 	pSize, _ := strconv.Atoi(psizeStr)
 
-	rsp, err := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{
+	rsp, err := global.UserSrvClient.GetUserList(context.Background(), &proto.PageInfo{
 		Pn:    uint32(pn),
 		PSize: uint32(pSize),
 	})
@@ -101,7 +90,7 @@ func GetUserList(c *gin.Context) {
 		data := response.UserResponse{
 			Id:       value.Id,
 			Gender:   value.Gender,
-			Mobile:   value.Mobile,
+			Email:    value.Email,
 			NickName: value.NickName,
 			Birthday: time.Unix(int64(value.Birthday), 0).Format("2006-01-02"),
 			Role:     value.Role,
@@ -121,35 +110,33 @@ func PasswordLogin(c *gin.Context) {
 		return
 	}
 
-	//连接grpc服务
-	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvInfo.Host, global.ServerConfig.UserSrvInfo.Port), grpc.WithInsecure())
-	if err != nil {
-		zap.S().Errorw("[PasswordLogin] 连接【用户服务】失败",
-			"msg", err.Error(),
-		)
+	if !store.Verify(PasswordLoginForm.CaptchaId, PasswordLoginForm.Captcha, true) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"captcha": "验证码错误",
+		})
+		return
 	}
-	//生成grpc的client并调用接口
-	userSrvClient := proto.NewUserClient(userConn)
 
-	if rsp, err := userSrvClient.GetUserByMobile(context.Background(), &proto.MobileRequest{
-		Mobile: PasswordLoginForm.Mobile,
+
+	if rsp, err := global.UserSrvClient.GetUserByEmail(context.Background(), &proto.EmailRequest{
+		Email: PasswordLoginForm.Email,
 	}); err != nil {
 		if e, ok := status.FromError(err); ok {
 			switch e.Code() {
 			case codes.NotFound:
 				c.JSON(http.StatusBadRequest, map[string]string{
-					"mobile": "用户不存在",
+					"email": "用户不存在",
 				})
 			default:
 				c.JSON(http.StatusInternalServerError, map[string]string{
-					"mobile": "登录失败",
+					"email": "登录失败",
 				})
 			}
 			return
 		}
 	} else {
 		//验证密码是否正确
-		if passRsp, passErr := userSrvClient.CheckPassword(context.Background(), &proto.PasswordCheckInfo{
+		if passRsp, passErr := global.UserSrvClient.CheckPassword(context.Background(), &proto.PasswordCheckInfo{
 			Password:          PasswordLoginForm.Password,
 			EncryptedPassword: rsp.Password,
 		}); passErr != nil {
@@ -161,13 +148,13 @@ func PasswordLogin(c *gin.Context) {
 				//使用jwt生成token
 				j := middleware.NewJWT()
 				claims := middleware.MyClaims{
-					ID: uint(rsp.Id),
-					NickName: rsp.NickName,
+					ID:          uint(rsp.Id),
+					NickName:    rsp.NickName,
 					AuthorityId: uint(rsp.Role),
-					StandardClaims:  jwt.StandardClaims{
-						NotBefore: time.Now().Unix(), // 签名生效时间
+					StandardClaims: jwt.StandardClaims{
+						NotBefore: time.Now().Unix(),               // 签名生效时间
 						ExpiresAt: time.Now().Unix() + 60*60*24*30, //设置30天过期
-						Issuer: "Samuel-Shu",
+						Issuer:    "Samuel-Shu",
 					},
 				}
 				token, err := j.CreateToken(claims)
@@ -182,7 +169,7 @@ func PasswordLogin(c *gin.Context) {
 					"id":         rsp.Id,
 					"nick_name":  rsp.NickName,
 					"token":      token,
-					"expired_at": (time.Now().Unix()+60*60*24*30)*1000,
+					"expired_at": (time.Now().Unix() + 60*60*24*30) * 1000,
 				})
 			} else {
 				c.JSON(http.StatusBadRequest, map[string]string{
@@ -193,4 +180,71 @@ func PasswordLogin(c *gin.Context) {
 		}
 	}
 
+}
+
+func Register(c *gin.Context) {
+	//进行表单验证，确认传入数据有效
+	RegisterForm := forms.RegisterForm{}
+	if err := c.ShouldBind(&RegisterForm); err != nil {
+		HandleValidatorError(c, err)
+		return
+	}
+
+	rdb := redis.NewClient(&redis.Options{
+		Addr: fmt.Sprintf("%s:%d", global.ServerConfig.RedisConfigInfo.IP, global.ServerConfig.RedisConfigInfo.Port),
+	})
+
+	result, err := rdb.Get(context.Background(), RegisterForm.Email).Result()
+	if err == redis.Nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code": "验证码错误",
+		})
+		return
+	} else {
+		if result != RegisterForm.Code {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"code": "验证码错误",
+			})
+			return
+		}
+	}
+
+	user, err := global.UserSrvClient.CreateUser(context.Background(), &proto.CreateUserInfo{
+		Email:    RegisterForm.Email,
+		NickName: RegisterForm.Email,
+		Password: RegisterForm.Password,
+	})
+
+	if err != nil {
+ 		zap.S().Errorf("[Register] 【新建用户】失败：%s", err)
+		HandleGrpcErrorToHttp(err, c)
+		return
+	}
+
+	//使用jwt生成token
+	j := middleware.NewJWT()
+	claims := middleware.MyClaims{
+		ID:          uint(user.Id),
+		NickName:    user.NickName,
+		AuthorityId: uint(user.Role),
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: time.Now().Unix(),               // 签名生效时间
+			ExpiresAt: time.Now().Unix() + 60*60*24*30, //设置30天过期
+			Issuer:    "Samuel-Shu",
+		},
+	}
+	token, err := j.CreateToken(claims)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": "生成token失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"id":         user.Id,
+		"nick_name":  user.NickName,
+		"token":      token,
+		"expired_at": (time.Now().Unix() + 60*60*24*30) * 1000,
+	})
 }

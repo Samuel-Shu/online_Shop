@@ -3,7 +3,7 @@ option go_package = ".;proto";
 
 service User{
   rpc GetUserList (PageInfo) returns (UserListResponse);//用户列表
-  rpc GetUserByMobile (MobileRequest) returns (UserInfoResponse);//通过mobile查询用户信息
+  rpc GetUserByEmail (EmailRequest) returns (UserInfoResponse);//通过Email查询用户信息
   rpc GetUserById (IdRequest) returns (UserInfoResponse);//通过id查询用户信息
   rpc CreateUser (CreateUserInfo) returns (UserInfoResponse);//创建用户
   rpc UpdateUser (UpdateUserInfo) returns (MyEmpty);//更新用户
@@ -21,7 +21,7 @@ message PageInfo {
 message UserInfoResponse {
   int32 id = 1;
   string password = 2;
-  string mobile = 3;
+  string email = 3;
   string nickName = 4;
   uint64 birthday = 5;
   string gender = 6;
@@ -33,8 +33,8 @@ message UserListResponse {
   repeated UserInfoResponse data = 2;
 }
 
-message MobileRequest {
-  string mobile = 1;
+message EmailRequest {
+  string email = 1;
 }
 
 message IdRequest {
@@ -43,7 +43,7 @@ message IdRequest {
 
 message CreateUserInfo {
   string nickName = 1;
-  string mobile = 2;
+  string email = 2;
   string password = 3;
 }
 

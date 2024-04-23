@@ -87,23 +87,23 @@ func JwtToken() gin.HandlerFunc {
 		checkToken := strings.Split(tokenHeader, " ")
 		if len(checkToken) == 0 {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"msg": "token错误",
+				"msg": "1、token错误",
 			})
 			c.Abort()
 			return
 		}
 
-		if len(checkToken) != 2 || checkToken[0] != "Bearer" {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"msg": "token错误",
-			})
-			c.Abort()
-			return
-		}
+		//if len(checkToken) != 2 || checkToken[0] != "Bearer" {
+		//	c.JSON(http.StatusBadRequest, gin.H{
+		//		"msg": "2、token错误",
+		//	})
+		//	c.Abort()
+		//	return
+		//}
 
 		j := NewJWT()
 		// 解析token
-		claims, err := j.ParserToken(checkToken[1])
+		claims, err := j.ParserToken(checkToken[0]) //若需要考虑是否有Bearer字段，则此处应该是checkToken[1]
 		if err != nil {
 			if err == TokenExpired {
 				c.JSON(http.StatusBadRequest, gin.H{
@@ -114,7 +114,7 @@ func JwtToken() gin.HandlerFunc {
 			}
 			// 其他错误
 			c.JSON(http.StatusBadRequest, gin.H{
-				"msg": "token错误",
+				"msg": "3、token错误",
 			})
 			c.Abort()
 			return

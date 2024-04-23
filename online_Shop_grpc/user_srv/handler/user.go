@@ -23,7 +23,7 @@ type UserServer struct {
 func Model2Resp(user model.User) proto.UserInfoResponse {
 	UserInfoResp := proto.UserInfoResponse{
 		Password: user.Password,
-		Mobile:   user.Mobile,
+		Email:    user.Email,
 		NickName: user.NickName,
 		Gender:   user.Gender,
 		Role:     uint32(user.Role),
@@ -77,9 +77,9 @@ func (u *UserServer) GetUserList(ctx context.Context, in *proto.PageInfo) (*prot
 	return rsp, nil
 }
 
-func (u *UserServer) GetUserByMobile(ctx context.Context, in *proto.MobileRequest) (*proto.UserInfoResponse, error) {
+func (u *UserServer) GetUserByEmail(ctx context.Context, in *proto.EmailRequest) (*proto.UserInfoResponse, error) {
 	var user model.User
-	tx := global.DB.Where("mobile = ?", in.Mobile).First(&user)
+	tx := global.DB.Where("email = ?", in.Email).First(&user)
 	if tx.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "用户不存在")
 	}
@@ -107,11 +107,11 @@ func (u *UserServer) CreateUser(ctx context.Context, in *proto.CreateUserInfo) (
 	//新建用户
 	//1、先查询用户是否已经存在：若存在，则返回注册错误状态码；若不存在，则继续注册
 	var user model.User
-	tx := global.DB.Where("mobile = ?", in.Mobile).First(&user)
+	tx := global.DB.Where("email = ?", in.Email).First(&user)
 	if tx.RowsAffected == 1 {
 		return nil, status.Errorf(codes.AlreadyExists, "用户已经存在")
 	}
-	user.Mobile = in.Mobile
+	user.Email = in.Email
 	user.NickName = in.NickName
 
 	//密码加密，出于安全性考虑，这里使用md5加盐加密处理

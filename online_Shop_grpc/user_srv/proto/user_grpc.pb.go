@@ -19,12 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	User_GetUserList_FullMethodName     = "/User/GetUserList"
-	User_GetUserByMobile_FullMethodName = "/User/GetUserByMobile"
-	User_GetUserById_FullMethodName     = "/User/GetUserById"
-	User_CreateUser_FullMethodName      = "/User/CreateUser"
-	User_UpdateUser_FullMethodName      = "/User/UpdateUser"
-	User_CheckPassword_FullMethodName   = "/User/CheckPassword"
+	User_GetUserList_FullMethodName    = "/User/GetUserList"
+	User_GetUserByEmail_FullMethodName = "/User/GetUserByEmail"
+	User_GetUserById_FullMethodName    = "/User/GetUserById"
+	User_CreateUser_FullMethodName     = "/User/CreateUser"
+	User_UpdateUser_FullMethodName     = "/User/UpdateUser"
+	User_CheckPassword_FullMethodName  = "/User/CheckPassword"
 )
 
 // UserClient is the client API for User service.
@@ -32,7 +32,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserClient interface {
 	GetUserList(ctx context.Context, in *PageInfo, opts ...grpc.CallOption) (*UserListResponse, error)
-	GetUserByMobile(ctx context.Context, in *MobileRequest, opts ...grpc.CallOption) (*UserInfoResponse, error)
+	GetUserByEmail(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*UserInfoResponse, error)
 	GetUserById(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*UserInfoResponse, error)
 	CreateUser(ctx context.Context, in *CreateUserInfo, opts ...grpc.CallOption) (*UserInfoResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserInfo, opts ...grpc.CallOption) (*MyEmpty, error)
@@ -56,9 +56,9 @@ func (c *userClient) GetUserList(ctx context.Context, in *PageInfo, opts ...grpc
 	return out, nil
 }
 
-func (c *userClient) GetUserByMobile(ctx context.Context, in *MobileRequest, opts ...grpc.CallOption) (*UserInfoResponse, error) {
+func (c *userClient) GetUserByEmail(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*UserInfoResponse, error) {
 	out := new(UserInfoResponse)
-	err := c.cc.Invoke(ctx, User_GetUserByMobile_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, User_GetUserByEmail_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func (c *userClient) CheckPassword(ctx context.Context, in *PasswordCheckInfo, o
 // for forward compatibility
 type UserServer interface {
 	GetUserList(context.Context, *PageInfo) (*UserListResponse, error)
-	GetUserByMobile(context.Context, *MobileRequest) (*UserInfoResponse, error)
+	GetUserByEmail(context.Context, *EmailRequest) (*UserInfoResponse, error)
 	GetUserById(context.Context, *IdRequest) (*UserInfoResponse, error)
 	CreateUser(context.Context, *CreateUserInfo) (*UserInfoResponse, error)
 	UpdateUser(context.Context, *UpdateUserInfo) (*MyEmpty, error)
@@ -121,8 +121,8 @@ type UnimplementedUserServer struct {
 func (UnimplementedUserServer) GetUserList(context.Context, *PageInfo) (*UserListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserList not implemented")
 }
-func (UnimplementedUserServer) GetUserByMobile(context.Context, *MobileRequest) (*UserInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserByMobile not implemented")
+func (UnimplementedUserServer) GetUserByEmail(context.Context, *EmailRequest) (*UserInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserByEmail not implemented")
 }
 func (UnimplementedUserServer) GetUserById(context.Context, *IdRequest) (*UserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserById not implemented")
@@ -167,20 +167,20 @@ func _User_GetUserList_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_GetUserByMobile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MobileRequest)
+func _User_GetUserByEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmailRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServer).GetUserByMobile(ctx, in)
+		return srv.(UserServer).GetUserByEmail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: User_GetUserByMobile_FullMethodName,
+		FullMethod: User_GetUserByEmail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).GetUserByMobile(ctx, req.(*MobileRequest))
+		return srv.(UserServer).GetUserByEmail(ctx, req.(*EmailRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -269,8 +269,8 @@ var User_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _User_GetUserList_Handler,
 		},
 		{
-			MethodName: "GetUserByMobile",
-			Handler:    _User_GetUserByMobile_Handler,
+			MethodName: "GetUserByEmail",
+			Handler:    _User_GetUserByEmail_Handler,
 		},
 		{
 			MethodName: "GetUserById",
