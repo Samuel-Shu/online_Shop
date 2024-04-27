@@ -11,5 +11,7 @@ var (
 
 	ServerConfig = &config.ServerConfig{}
 
+	NacosConfig = &config.NacosConfig{}
+
 	UserSrvClient proto.UserClient
 )

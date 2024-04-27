@@ -5,9 +5,11 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"online_Shop_api/user_web/global"
 	"online_Shop_api/user_web/initialize"
+	"online_Shop_api/user_web/utils"
 	myvalidator "online_Shop_api/user_web/validator"
 )
 
@@ -22,6 +24,21 @@ func main() {
 	err:= initialize.InitTrans("zh")
 	if err != nil {
 		panic(err)
+	}
+
+	//初始化srv连接
+	initialize.InitSrvConn()
+
+	viper.AutomaticEnv()
+	debug := viper.GetBool("ONLINE_SHOP_DEBUG")
+	//debug表示本地测试环境
+	//如果是debug，则端口号固定，方便测试，如果非debug模式，端口号随机获取可用
+	if !debug {
+		port, err := utils.GetFreePort()
+		if err == nil {
+			global.ServerConfig.Port = port
+		}
+
 	}
 
 	//注册验证器
