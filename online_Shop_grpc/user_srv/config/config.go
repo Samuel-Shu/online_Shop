@@ -19,3 +19,13 @@ type ServerConfig struct {
 	MysqlConfigInfo MysqlConfig  `mapstructure:"mysql" json:"mysql"`
 	ConsulInfo      ConsulConfig `mapstructure:"consul" json:"consul"`
 }
+
+type NacosConfig struct {
+	Host      string `mapstructure:"host"`
+	Port      int    `mapstructure:"port"`
+	NameSpace string `mapstructure:"namespace"`
+	User      string `mapstructure:"user"`
+	Password  string `mapstructure:"password"`
+	DataId    string `mapstructure:"dataid"`
+	Group     string `mapstructure:"group"`
+}

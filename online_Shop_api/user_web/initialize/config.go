@@ -9,7 +9,6 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
-	"online_Shop_api/user_web/config"
 	"online_Shop_api/user_web/global"
 )
 
@@ -19,7 +18,7 @@ func GetEnvInfo(env string) bool {
 	return viper.GetBool(env)
 }
 
-func InitConfig()  {
+func InitConfig() {
 	debug := GetEnvInfo("ONLINE_SHOP_DEBUG")
 	configFilePrefix := "config"
 	configFileName := fmt.Sprintf("user_web/%s-pro.yaml", configFilePrefix)
@@ -33,7 +32,7 @@ func InitConfig()  {
 		panic(err)
 	}
 
-	if err := v.Unmarshal(global.NacosConfig); err != nil{
+	if err := v.Unmarshal(global.NacosConfig); err != nil {
 		panic(err)
 	}
 
@@ -46,7 +45,7 @@ func InitConfig()  {
 		if err := v.ReadInConfig(); err != nil {
 			panic(err)
 		}
-		if err := v.Unmarshal(global.NacosConfig); err != nil{
+		if err := v.Unmarshal(global.NacosConfig); err != nil {
 			panic(err)
 		}
 
@@ -57,31 +56,30 @@ func InitConfig()  {
 	sc := []constant.ServerConfig{
 		{
 			IpAddr: global.NacosConfig.Host,
-			Port: uint64(global.NacosConfig.Port),
-
+			Port:   uint64(global.NacosConfig.Port),
 		},
 	}
 
-	cc := []constant.ClientConfig{
-		{
-			NamespaceId: global.NacosConfig.NameSpace,
-			TimeoutMs: 5000,
-			NotLoadCacheAtStart: true,
-			LogDir: "../tmp/nacos/log",
-			CacheDir: "../tmp/nacos/cache",
-			LogLevel: "debug",
-		},
+	cc := constant.ClientConfig{
+		NamespaceId:         global.NacosConfig.NameSpace,
+		TimeoutMs:           5000,
+		NotLoadCacheAtStart: true,
+		LogDir:              "../tmp/nacos/log",
+		CacheDir:            "../tmp/nacos/cache",
+		LogLevel:            "debug",
 	}
 
-	configClient, err := clients.CreateConfigClient(map[string]interface{}{
-		"serverConfigs": sc,
-		"clientConfig": cc,
-	})
+	client, err := clients.NewConfigClient(
+		vo.NacosClientParam{
+			ClientConfig:  &cc,
+			ServerConfigs: sc,
+		},
+	)
 	if err != nil {
 		panic(err)
 	}
 
-	content, err := configClient.GetConfig(vo.ConfigParam{
+	content, err := client.GetConfig(vo.ConfigParam{
 		DataId: global.NacosConfig.DataId,
 		Group:  global.NacosConfig.Group,
 	})
@@ -90,12 +88,10 @@ func InitConfig()  {
 		panic(err)
 	}
 
-	serverConfig := config.ServerConfig{}
-
-	err = json.Unmarshal([]byte(content), &serverConfig)
+	err = json.Unmarshal([]byte(content), &global.ServerConfig)
 	if err != nil {
 		zap.S().Fatalf("读取nacos配置失败：%s", err)
 	}
 
-	fmt.Println(serverConfig)
+	fmt.Println(global.ServerConfig)
 }

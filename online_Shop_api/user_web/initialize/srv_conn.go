@@ -1,4 +1,5 @@
 package initialize
+
 import (
 	"fmt"
 	"github.com/hashicorp/consul/api"
@@ -9,7 +10,8 @@ import (
 	"online_Shop_api/user_web/proto"
 )
 
-func InitSrvConn()  {
+func InitSrvConn() {
+	fmt.Println(global.ServerConfig.ConsulInfo)
 	userConn, err := grpc.Dial(
 		fmt.Sprintf("consul://%s:%d/%s?wait=14s", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port, global.ServerConfig.UserSrvInfo.Name),
 		grpc.WithInsecure(),
@@ -21,6 +23,7 @@ func InitSrvConn()  {
 	//生成grpc的client并调用接口
 	userSrvClient := proto.NewUserClient(userConn)
 	global.UserSrvClient = userSrvClient
+	fmt.Println(global.UserSrvClient)
 }
 
 func InitSrvConn1() {

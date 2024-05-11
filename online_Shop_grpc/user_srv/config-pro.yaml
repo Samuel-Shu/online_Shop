@@ -1,10 +1,7 @@
-name: 'user-srv'
-mysql:
-  host: '192.168.137.133'
-  port: 3306
-  db: 'onlineShop_user_srv'
-  user: 'root'
-  password: 'sx221410'
-consul:
-  host: '192.168.137.133'
-  port: 8500
+host: '192.168.137.134'
+port: 8848
+namespace: 'd2050bb3-d9f9-4bf5-83ba-aa819aa453ff'
+user: 'nacos'
+password: 'nacos'
+dataid: 'user-srv.json'
+group: 'pro'
