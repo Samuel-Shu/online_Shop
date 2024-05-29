@@ -30,7 +30,7 @@ func (g *GoodsServer) CategoryBrandList(c context.Context, req *proto.CategoryBr
 				ParentCategory: int32(categoryBrand.Category.ParentCategoryID),
 			},
 			Brand: &proto.BrandInfoResponse{
-				Id: int32(categoryBrand.Brands.ID),
+				Id:   int32(categoryBrand.Brands.ID),
 				Name: categoryBrand.Brands.Name,
 				Logo: categoryBrand.Brands.Logo,
 			},
@@ -59,7 +59,7 @@ func (g *GoodsServer) GetCategoryBrandList(c context.Context, req *proto.Categor
 	var brandInfoResponses []*proto.BrandInfoResponse
 	for _, categoryBrand := range categoryBrands {
 		brandInfoResponses = append(brandInfoResponses, &proto.BrandInfoResponse{
-			Id: int32(categoryBrand.Brands.ID),
+			Id:   int32(categoryBrand.Brands.ID),
 			Name: categoryBrand.Brands.Name,
 			Logo: categoryBrand.Brands.Logo,
 		})
@@ -86,10 +86,33 @@ func (g *GoodsServer) CreateCategoryBrand(c context.Context, req *proto.Category
 	global.DB.Save(&categoryBrand)
 	return &proto.CategoryBrandResponse{Id: int32(categoryBrand.ID)}, nil
 }
+
 func (g *GoodsServer) DeleteCategoryBrand(c context.Context, req *proto.CategoryBrandRequest) (*proto.MyEmpty, error) {
 	if res := global.DB.Delete(&model.GoodsCategoryBrand{}, req.Id); res.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "品牌分类不存在")
 	}
 	return &proto.MyEmpty{}, nil
 }
-//UpdateCategoryBrand(context.Context, *CategoryBrandRequest) (*MyEmpty, error)
+
+func (g *GoodsServer) UpdateCategoryBrand(c context.Context, req *proto.CategoryBrandRequest) (*proto.MyEmpty, error) {
+	var categoryBrand model.GoodsCategoryBrand
+	if r := global.DB.First(&categoryBrand, req.Id); r.RowsAffected == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "品牌分类不存在")
+	}
+
+	var category model.Category
+	if r := global.DB.First(&category, req.CategoryId); r.RowsAffected == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "商品分类不存在")
+	}
+
+	var brand model.Brands
+	if r := global.DB.First(&brand, req.BrandId); r.RowsAffected == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "品牌不存在")
+	}
+
+	categoryBrand.CategoryID = uint(req.CategoryId)
+	categoryBrand.BrandsID = uint(req.BrandId)
+	global.DB.Save(&categoryBrand)
+
+	return &proto.MyEmpty{}, nil
+}
