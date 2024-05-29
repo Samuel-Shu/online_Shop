@@ -1,0 +1,23 @@
+{
+    "name": "user-web",
+    "port": 7071,
+    "user_srv": {
+        "name": "user-srv"
+    },
+    "jwt": {
+        "key": "1oyJ~LbGx%$hoPa&iVsB"
+    },
+    "redis": {
+        "ip": "192.168.137.134",
+        "port": 6379,
+        "expire": 60
+    },
+    "email": {
+        "fromEmail": "2440039602@qq.com",
+        "secretKey": "qgajgbzollmwdiai"
+    },
+    "consul": {
+        "host": "192.168.137.134",
+        "port": 8500
+    }
+}

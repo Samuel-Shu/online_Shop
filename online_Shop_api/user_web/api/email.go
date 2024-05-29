@@ -26,7 +26,7 @@ func SendEmail(c *gin.Context) {
 	m.SetHeader("From", global.ServerConfig.EmailConfigInfo.FromEmail)
 	m.SetHeader("To", SendEmailForm.Email)
 	m.SetHeader("Subject", "登录验证码：")
-	m.SetBody("text/html", "<p>【online_shop】的验证码是</p> <b>"+captcha+"</b>")
+	m.SetBody("test/html", "<p>【online_shop】的验证码是</p> <b>"+captcha+"</b>")
 	//m.Attach("/home/Alex/lolcat.jpg")
 
 	rdb := redis.NewClient(&redis.Options{
