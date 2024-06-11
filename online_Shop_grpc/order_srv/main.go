@@ -10,11 +10,11 @@ import (
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"net"
-	"online_Shop/inventory_srv/global"
-	"online_Shop/inventory_srv/handler"
-	"online_Shop/inventory_srv/initialize"
-	"online_Shop/inventory_srv/proto"
-	"online_Shop/inventory_srv/utils"
+	"online_Shop/order_srv/global"
+	"online_Shop/order_srv/handler"
+	"online_Shop/order_srv/initialize"
+	"online_Shop/order_srv/proto"
+	"online_Shop/order_srv/utils"
 	"os"
 	"os/signal"
 	"syscall"
@@ -28,6 +28,7 @@ func main() {
 	initialize.InitLogger()
 	initialize.InitConfig()
 	initialize.InitDb()
+	initialize.InitSrvConn()
 	initialize.InitRedisLock()
 
 	zap.S().Info("ip地址：", *IP)
@@ -38,7 +39,7 @@ func main() {
 	zap.S().Info("port端口：", *PORT)
 
 	server := grpc.NewServer()
-	proto.RegisterInventoryServer(server, &handler.InventoryServer{})
+	proto.RegisterOrderServer(server, &handler.OrderServer{})
 	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", *IP, *PORT))
 	if err != nil {
 		panic("端口监听失败" + err.Error())
