@@ -128,6 +128,7 @@ func (o *OrderServer) OrderList(c context.Context, req *proto.OrderFilterRequest
 			Address: order.Address,
 			Name:    order.SignerName,
 			Mobile:  order.SignerMobile,
+			AddTime: order.CreatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
 

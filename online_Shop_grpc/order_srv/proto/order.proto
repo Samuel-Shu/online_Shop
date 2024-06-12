@@ -86,6 +86,7 @@ message OrderInfoResponse {
   string address = 8;
   string name = 9;
   string mobile = 10;
+  string addTime = 11;
 }
 
 message ShopCartInfoResponse {
