@@ -4,9 +4,9 @@ import (
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"online_Shop/goods_srv/global"
 	"online_Shop/goods_srv/model"
 	"online_Shop/goods_srv/proto"
-	"online_Shop/user_srv/global"
 )
 
 // 轮播图
@@ -21,7 +21,7 @@ func (g *GoodsServer) BannerList(context.Context, *proto.MyEmpty) (*proto.Banner
 	var bannerResponses []*proto.BannerResponse
 	for _, banner := range banners {
 		bannerResponses = append(bannerResponses, &proto.BannerResponse{
-			Id: int32(banner.ID),
+			Id:    int32(banner.ID),
 			Index: banner.Index,
 			Image: banner.Image,
 			Url:   banner.Url,

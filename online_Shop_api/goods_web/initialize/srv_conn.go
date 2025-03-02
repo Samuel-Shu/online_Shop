@@ -10,7 +10,7 @@ import (
 )
 
 func InitSrvConn() {
-	fmt.Println(global.ServerConfig.ConsulInfo)
+	fmt.Println(global.ServerConfig.ConsulInfo, global.ServerConfig.GoodsSrvInfo.Name)
 	userConn, err := grpc.Dial(
 		fmt.Sprintf("consul://%s:%d/%s?wait=14s", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port, global.ServerConfig.GoodsSrvInfo.Name),
 		grpc.WithInsecure(),

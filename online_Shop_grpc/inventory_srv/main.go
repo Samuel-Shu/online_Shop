@@ -57,7 +57,7 @@ func main() {
 	}
 	//生成对应的检查对象
 	check := &api.AgentServiceCheck{
-		GRPC:                           fmt.Sprintf("%s:%d", "192.168.137.1", *PORT),
+		GRPC:                           fmt.Sprintf("%s:%d", "192.168.220.1", *PORT),
 		Timeout:                        "5s",
 		Interval:                       "5s",
 		DeregisterCriticalServiceAfter: "15s",
@@ -69,7 +69,7 @@ func main() {
 	registration.ID = serverId
 	registration.Port = *PORT
 	registration.Tags = []string{"onlineShop", "Samuel-Shu", "inventory", "srv"}
-	registration.Address = "192.168.137.1"
+	registration.Address = "192.168.220.1"
 	registration.Check = check
 
 	err = client.Agent().ServiceRegister(registration)
@@ -87,7 +87,7 @@ func main() {
 	//接受终止信号
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<- quit
+	<-quit
 
 	if err := client.Agent().ServiceDeregister(serverId); err != nil {
 		zap.S().Info("注销失败")

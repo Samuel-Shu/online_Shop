@@ -1,0 +1,24 @@
+{
+    "name": "order-srv",
+    "mysql": {
+        "host": "192.168.220.128",
+        "port": 3306,
+        "db": "onlineshop_order_srv",
+        "user": "root",
+        "password": "sx221410"
+    },
+    "consul": {
+        "host": "192.168.220.128",
+        "port": 8500
+    },
+    "redis": {
+        "host":"192.168.220.128",
+        "port": 6379
+    },
+    "goods_srv": {
+        "name": "goods-srv"
+    },
+    "inventory_srv": {
+        "name": "inventory-srv"
+    }
+}

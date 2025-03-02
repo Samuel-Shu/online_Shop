@@ -5,17 +5,17 @@ service Order {
   //购物车
   rpc CartItemList (UserInfo) returns (CartItemListResponse); //获取用户购物车信息
   rpc CreateCartItem (CartItemRequest) returns (ShopCartInfoResponse);//添加商品到购物车
-  rpc UpdateCartItem (CartItemRequest) returns (MyEmpty); //修改购物车记录
-  rpc DeleteCartItem (CartItemRequest) returns (MyEmpty); //删除购物车记录
+  rpc UpdateCartItem (CartItemRequest) returns (MyEmptyWithOrder); //修改购物车记录
+  rpc DeleteCartItem (CartItemRequest) returns (MyEmptyWithOrder); //删除购物车记录
 
   //订单
   rpc CreateOrder (OrderRequest) returns (OrderInfoResponse); //创建订单
   rpc OrderList (OrderFilterRequest) returns (OrderListResponse); // 获取订单列表
   rpc OrderDetail (OrderRequest) returns (OrderInfoDetailResponse); //获取订单详情
-  rpc UpdateOrderStatus (OrderStatus) returns (MyEmpty); //修改订单状态
+  rpc UpdateOrderStatus (OrderStatus) returns (MyEmptyWithOrder); //修改订单状态
 }
 
-message MyEmpty {
+message MyEmptyWithOrder {
 }
 
 message UserInfo {

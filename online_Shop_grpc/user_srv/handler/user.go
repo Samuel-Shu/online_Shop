@@ -22,6 +22,7 @@ type UserServer struct {
 
 func Model2Resp(user model.User) proto.UserInfoResponse {
 	UserInfoResp := proto.UserInfoResponse{
+		Id:       int32(user.ID),
 		Password: user.Password,
 		Email:    user.Email,
 		NickName: user.NickName,
@@ -71,8 +72,8 @@ func (u *UserServer) GetUserList(ctx context.Context, in *proto.PageInfo) (*prot
 	global.DB.Scopes(Paginate(int(in.Pn), int(in.PSize))).Find(&users)
 
 	for _, user := range users {
-		userInfoRes := Model2Resp(user)
-		rsp.Data = append(rsp.Data, &userInfoRes)
+		userInfoRsp := Model2Resp(user)
+		rsp.Data = append(rsp.Data, &userInfoRsp)
 	}
 	return rsp, nil
 }

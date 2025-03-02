@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v3.19.4
-// source: order.proto
+// source: inventory.proto
 
 package proto
 
@@ -29,11 +29,11 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InventoryClient interface {
-	SetInv(ctx context.Context, in *GoodsInvInfo, opts ...grpc.CallOption) (*MyEmpty, error)
+	SetInv(ctx context.Context, in *GoodsInvInfo, opts ...grpc.CallOption) (*MyEmptyWithInv, error)
 	InvDetail(ctx context.Context, in *GoodsInvInfo, opts ...grpc.CallOption) (*GoodsInvInfo, error)
 	// 买东西的时候习惯从购物车中去买，此时对于批量商品的库存问题，最好采用事务（同时成功或者回滚）
-	Sell(ctx context.Context, in *SellInfo, opts ...grpc.CallOption) (*MyEmpty, error)
-	Reback(ctx context.Context, in *SellInfo, opts ...grpc.CallOption) (*MyEmpty, error)
+	Sell(ctx context.Context, in *SellInfo, opts ...grpc.CallOption) (*MyEmptyWithInv, error)
+	Reback(ctx context.Context, in *SellInfo, opts ...grpc.CallOption) (*MyEmptyWithInv, error)
 }
 
 type inventoryClient struct {
@@ -44,8 +44,8 @@ func NewInventoryClient(cc grpc.ClientConnInterface) InventoryClient {
 	return &inventoryClient{cc}
 }
 
-func (c *inventoryClient) SetInv(ctx context.Context, in *GoodsInvInfo, opts ...grpc.CallOption) (*MyEmpty, error) {
-	out := new(MyEmpty)
+func (c *inventoryClient) SetInv(ctx context.Context, in *GoodsInvInfo, opts ...grpc.CallOption) (*MyEmptyWithInv, error) {
+	out := new(MyEmptyWithInv)
 	err := c.cc.Invoke(ctx, Inventory_SetInv_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -62,8 +62,8 @@ func (c *inventoryClient) InvDetail(ctx context.Context, in *GoodsInvInfo, opts 
 	return out, nil
 }
 
-func (c *inventoryClient) Sell(ctx context.Context, in *SellInfo, opts ...grpc.CallOption) (*MyEmpty, error) {
-	out := new(MyEmpty)
+func (c *inventoryClient) Sell(ctx context.Context, in *SellInfo, opts ...grpc.CallOption) (*MyEmptyWithInv, error) {
+	out := new(MyEmptyWithInv)
 	err := c.cc.Invoke(ctx, Inventory_Sell_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -71,8 +71,8 @@ func (c *inventoryClient) Sell(ctx context.Context, in *SellInfo, opts ...grpc.C
 	return out, nil
 }
 
-func (c *inventoryClient) Reback(ctx context.Context, in *SellInfo, opts ...grpc.CallOption) (*MyEmpty, error) {
-	out := new(MyEmpty)
+func (c *inventoryClient) Reback(ctx context.Context, in *SellInfo, opts ...grpc.CallOption) (*MyEmptyWithInv, error) {
+	out := new(MyEmptyWithInv)
 	err := c.cc.Invoke(ctx, Inventory_Reback_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -84,11 +84,11 @@ func (c *inventoryClient) Reback(ctx context.Context, in *SellInfo, opts ...grpc
 // All implementations must embed UnimplementedInventoryServer
 // for forward compatibility
 type InventoryServer interface {
-	SetInv(context.Context, *GoodsInvInfo) (*MyEmpty, error)
+	SetInv(context.Context, *GoodsInvInfo) (*MyEmptyWithInv, error)
 	InvDetail(context.Context, *GoodsInvInfo) (*GoodsInvInfo, error)
 	// 买东西的时候习惯从购物车中去买，此时对于批量商品的库存问题，最好采用事务（同时成功或者回滚）
-	Sell(context.Context, *SellInfo) (*MyEmpty, error)
-	Reback(context.Context, *SellInfo) (*MyEmpty, error)
+	Sell(context.Context, *SellInfo) (*MyEmptyWithInv, error)
+	Reback(context.Context, *SellInfo) (*MyEmptyWithInv, error)
 	mustEmbedUnimplementedInventoryServer()
 }
 
@@ -96,16 +96,16 @@ type InventoryServer interface {
 type UnimplementedInventoryServer struct {
 }
 
-func (UnimplementedInventoryServer) SetInv(context.Context, *GoodsInvInfo) (*MyEmpty, error) {
+func (UnimplementedInventoryServer) SetInv(context.Context, *GoodsInvInfo) (*MyEmptyWithInv, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetInv not implemented")
 }
 func (UnimplementedInventoryServer) InvDetail(context.Context, *GoodsInvInfo) (*GoodsInvInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InvDetail not implemented")
 }
-func (UnimplementedInventoryServer) Sell(context.Context, *SellInfo) (*MyEmpty, error) {
+func (UnimplementedInventoryServer) Sell(context.Context, *SellInfo) (*MyEmptyWithInv, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Sell not implemented")
 }
-func (UnimplementedInventoryServer) Reback(context.Context, *SellInfo) (*MyEmpty, error) {
+func (UnimplementedInventoryServer) Reback(context.Context, *SellInfo) (*MyEmptyWithInv, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Reback not implemented")
 }
 func (UnimplementedInventoryServer) mustEmbedUnimplementedInventoryServer() {}
@@ -218,5 +218,5 @@ var Inventory_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "order.proto",
+	Metadata: "inventory.proto",
 }

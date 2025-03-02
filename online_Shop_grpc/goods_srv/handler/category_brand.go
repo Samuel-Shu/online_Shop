@@ -4,9 +4,9 @@ import (
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"online_Shop/goods_srv/global"
 	"online_Shop/goods_srv/model"
 	"online_Shop/goods_srv/proto"
-	"online_Shop/user_srv/global"
 )
 
 func (g *GoodsServer) CategoryBrandList(c context.Context, req *proto.CategoryBrandFilterRequest) (*proto.CategoryBrandListResponse, error) {

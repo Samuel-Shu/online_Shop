@@ -1,14 +1,14 @@
 {
-    "name": "goods-srv",
+    "name": "user-srv",
     "mysql": {
-        "host": "192.168.137.134",
+        "host": "192.168.220.128",
         "port": 3306,
-        "db": "onlineShop_goods_srv",
+        "db": "onlineshop_user_srv",
         "user": "root",
         "password": "sx221410"
     },
     "consul": {
-        "host": "192.168.137.134",
+        "host": "192.168.220.128",
         "port": 8500
     }
 }

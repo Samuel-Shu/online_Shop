@@ -63,8 +63,8 @@ func HandleValidatorError(c *gin.Context, err error) {
 	return
 }
 
-func List(c *gin.Context)  {
-	r, err := global.GoodsSrvClient.GetAllCategoryList(context.Background(), &proto.MyEmpty{})
+func List(c *gin.Context) {
+	r, err := global.GoodsSrvClient.GetAllCategoryList(context.Background(), &proto.MyEmptyWithGoods{})
 	if err != nil {
 		HandleGrpcErrorToHttp(err, c)
 		return
@@ -78,7 +78,7 @@ func List(c *gin.Context)  {
 	c.JSON(http.StatusOK, data)
 }
 
-func Detail(c *gin.Context)  {
+func Detail(c *gin.Context) {
 	id := c.Param("id")
 	i, err := strconv.ParseInt(id, 10, 32)
 	if err != nil {
@@ -93,14 +93,14 @@ func Detail(c *gin.Context)  {
 	}); err != nil {
 		HandleGrpcErrorToHttp(err, c)
 		return
-	}else {
+	} else {
 		for _, value := range r.SubCategorys {
 			subCategory = append(subCategory, map[string]interface{}{
-				"id": value.Id,
-				"name": value.Name,
-				"level": value.Level,
+				"id":              value.Id,
+				"name":            value.Name,
+				"level":           value.Level,
 				"parent_category": value.ParentCategory,
-				"is_tab": value.IsTab,
+				"is_tab":          value.IsTab,
 			})
 		}
 		reMap["id"] = r.Info.Id
@@ -115,7 +115,7 @@ func Detail(c *gin.Context)  {
 	return
 }
 
-func New(c *gin.Context)  {
+func New(c *gin.Context) {
 	categoryForm := forms.CategoryForm{}
 	if err := c.ShouldBindJSON(&categoryForm); err != nil {
 		HandleValidatorError(c, err)
@@ -123,9 +123,9 @@ func New(c *gin.Context)  {
 	}
 
 	rsp, err := global.GoodsSrvClient.CreateCategory(context.Background(), &proto.CategoryInfoRequest{
-		Name: categoryForm.Name,
-		IsTab: *categoryForm.IsTab,
-		Level: categoryForm.Level,
+		Name:           categoryForm.Name,
+		IsTab:          *categoryForm.IsTab,
+		Level:          categoryForm.Level,
 		ParentCategory: categoryForm.ParentCategory,
 	})
 
@@ -144,7 +144,7 @@ func New(c *gin.Context)  {
 	c.JSON(http.StatusOK, request)
 }
 
-func Delete(c *gin.Context)  {
+func Delete(c *gin.Context) {
 	id := c.Param("id")
 	i, err := strconv.ParseInt(id, 10, 32)
 	if err != nil {
@@ -176,7 +176,7 @@ func Update(c *gin.Context) {
 	}
 
 	request := &proto.CategoryInfoRequest{
-		Id: int32(i),
+		Id:   int32(i),
 		Name: categoryForm.Name,
 	}
 	if categoryForm.IsTab != nil {

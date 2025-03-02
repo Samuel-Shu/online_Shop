@@ -3,17 +3,19 @@ package order
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/smartwalle/alipay/v3"
 	"go.uber.org/zap"
 	"net/http"
 	"online_Shop_api/order_web/api"
 	"online_Shop_api/order_web/forms"
 	"online_Shop_api/order_web/global"
+	"online_Shop_api/order_web/middleware"
 	"online_Shop_api/order_web/proto"
-	"online_Shop_api/user_web/middleware"
+
 	"strconv"
 )
 
-func List(c *gin.Context)  {
+func List(c *gin.Context) {
 	//订单的列表
 
 	userId, _ := c.Get("userId")
@@ -34,7 +36,6 @@ func List(c *gin.Context)  {
 	pagePerNums := c.DefaultQuery("pnum", "0")
 	pagePerNumsInt, _ := strconv.Atoi(pagePerNums)
 	request.PagePerNums = int32(pagePerNumsInt)
-
 
 	rsp, err := global.OrderSrvClient.OrderList(context.Background(), &request)
 	if err != nil {
@@ -72,7 +73,7 @@ func List(c *gin.Context)  {
 	c.JSON(http.StatusOK, reMap)
 }
 
-func New(c *gin.Context)  {
+func New(c *gin.Context) {
 	orderForm := forms.CreateOrderForm{}
 	if err := c.ShouldBindJSON(&orderForm); err != nil {
 		api.HandleValidatorError(c, err)
@@ -94,13 +95,49 @@ func New(c *gin.Context)  {
 		return
 	}
 
-	//todo:返回支付宝的支付url
+	// 支付宝支付url生成
+	client, err := alipay.New(global.ServerConfig.AlipayInfo.AppID, global.ServerConfig.AlipayInfo.PrivateKey, false)
+	if err != nil {
+		zap.S().Errorw("实例化支付宝的url失败")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+
+	err = client.LoadAliPayPublicKey(global.ServerConfig.AlipayInfo.AliPublicKey)
+	if err != nil {
+		zap.S().Errorw("加载支付宝公钥失败")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+
+	var p = alipay.TradePagePay{}
+	p.NotifyURL = global.ServerConfig.AlipayInfo.NotifyURL
+	p.ReturnURL = global.ServerConfig.AlipayInfo.ReturnURL
+	p.Subject = "onlineShop订单-" + rsp.OrderSn
+	p.OutTradeNo = rsp.OrderSn
+	p.TotalAmount = strconv.FormatFloat(float64(rsp.Total), 'f', 2, 64)
+	p.ProductCode = "FAST_INSTANT_PAY"
+
+	url, err := client.TradePagePay(p)
+	if err != nil {
+		zap.S().Errorw("生成支付url失败")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"id": rsp.Id,
+		"id":         rsp.Id,
+		"alipay_url": url.String(),
 	})
 }
 
-func Detail(c *gin.Context)  {
+func Detail(c *gin.Context) {
 	id := c.Param("id")
 	userId, _ := c.Get("userId")
 	claims, _ := c.Get("claims")
@@ -142,16 +179,52 @@ func Detail(c *gin.Context)  {
 	goodsList := make([]interface{}, 0)
 	for _, item := range rsp.Goods {
 		tmpMap := gin.H{
-			"id": item.GoodsId,
-			"name": item.GoodsName,
+			"id":    item.GoodsId,
+			"name":  item.GoodsName,
 			"price": item.GoodsPrice,
 			"image": item.GoodsImage,
-			"nums": item.Nums,
+			"nums":  item.Nums,
 		}
 
 		goodsList = append(goodsList, tmpMap)
 	}
 	reMap["goods"] = goodsList
+
+	client, err := alipay.New(global.ServerConfig.AlipayInfo.AppID, global.ServerConfig.AlipayInfo.PrivateKey, false)
+	if err != nil {
+		zap.S().Errorw("实例化支付宝的url失败")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+
+	err = client.LoadAliPayPublicKey(global.ServerConfig.AlipayInfo.AliPublicKey)
+	if err != nil {
+		zap.S().Errorw("加载支付宝公钥失败")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+
+	var p = alipay.TradePagePay{}
+	p.NotifyURL = global.ServerConfig.AlipayInfo.NotifyURL
+	p.ReturnURL = global.ServerConfig.AlipayInfo.ReturnURL
+	p.Subject = "onlineShop订单-" + rsp.OrderInfo.OrderSn
+	p.OutTradeNo = rsp.OrderInfo.OrderSn
+	p.TotalAmount = strconv.FormatFloat(float64(rsp.OrderInfo.Total), 'f', 2, 64)
+	p.ProductCode = "FAST_INSTANT_PAY"
+
+	url, err := client.TradePagePay(p)
+	if err != nil {
+		zap.S().Errorw("生成支付url失败")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+	reMap["alipay_url"] = url.String()
 
 	c.JSON(http.StatusOK, reMap)
 }

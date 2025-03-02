@@ -35,7 +35,6 @@ func main() {
 	}
 
 	zap.S().Info("port端口：", *PORT)
-
 	server := grpc.NewServer()
 	proto.RegisterUserServer(server, &handler.UserServer{})
 	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", *IP, *PORT))
@@ -56,7 +55,7 @@ func main() {
 	}
 	//生成对应的检查对象
 	check := &api.AgentServiceCheck{
-		GRPC:                           fmt.Sprintf("%s:%d", "192.168.137.1", *PORT),
+		GRPC:                           fmt.Sprintf("%s:%d", "192.168.220.1", *PORT),
 		Timeout:                        "5s",
 		Interval:                       "5s",
 		DeregisterCriticalServiceAfter: "15s",
@@ -68,9 +67,9 @@ func main() {
 	registration.ID = serverId
 	registration.Port = *PORT
 	registration.Tags = []string{"onlineShop", "Samuel-Shu", "user", "srv"}
-	registration.Address = "192.168.137.1"
+	registration.Address = "192.168.220.1"
 	registration.Check = check
-
+	zap.S().Info(serverId)
 	err = client.Agent().ServiceRegister(registration)
 	if err != nil {
 		panic(err)
@@ -86,7 +85,7 @@ func main() {
 	//接受终止信号
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<- quit
+	<-quit
 
 	if err := client.Agent().ServiceDeregister(serverId); err != nil {
 		zap.S().Info("注销失败")

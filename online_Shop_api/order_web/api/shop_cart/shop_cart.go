@@ -5,14 +5,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
+	"online_Shop_api/order_web/api"
 	"online_Shop_api/order_web/forms"
 	"online_Shop_api/order_web/global"
 	"online_Shop_api/order_web/proto"
-	"online_Shop_api/user_web/api"
 	"strconv"
 )
 
-func List(c *gin.Context)  {
+func List(c *gin.Context) {
 	userId, _ := c.Get("userId")
 	rsp, err := global.OrderSrvClient.CartItemList(context.Background(), &proto.UserInfo{
 		Id: int32(userId.(uint)),
@@ -73,7 +73,7 @@ func List(c *gin.Context)  {
 	c.JSON(http.StatusOK, reMap)
 }
 
-func Delete(c *gin.Context)  {
+func Delete(c *gin.Context) {
 	id := c.Param("id")
 	i, err := strconv.Atoi(id)
 	if err != nil {
@@ -92,7 +92,7 @@ func Delete(c *gin.Context)  {
 	c.Status(http.StatusOK)
 }
 
-func New(c *gin.Context)  {
+func New(c *gin.Context) {
 	//添加商品到购物车
 	itemForm := forms.ShopCartItemForm{}
 	if err := c.ShouldBindJSON(&itemForm); err != nil {
@@ -128,9 +128,9 @@ func New(c *gin.Context)  {
 
 	userId, _ := c.Get("userId")
 	rsp, err := global.OrderSrvClient.CreateCartItem(context.Background(), &proto.CartItemRequest{
-		Id: itemForm.GoodId,
+		Id:     itemForm.GoodId,
 		UserId: userId.(int32),
-		Nums: itemForm.Nums,
+		Nums:   itemForm.Nums,
 	})
 
 	if err != nil {
@@ -146,7 +146,7 @@ func New(c *gin.Context)  {
 
 }
 
-func Update(c *gin.Context)  {
+func Update(c *gin.Context) {
 	itemForm := forms.ShopCartItemUpdateForm{}
 	if err := c.ShouldBindJSON(&itemForm); err != nil {
 		api.HandleValidatorError(c, err)
@@ -164,7 +164,7 @@ func Update(c *gin.Context)  {
 	request := &proto.CartItemRequest{
 		UserId:  userId.(int32),
 		GoodsId: int32(i),
-		Nums: itemForm.Nums,
+		Nums:    itemForm.Nums,
 		Checked: false,
 	}
 

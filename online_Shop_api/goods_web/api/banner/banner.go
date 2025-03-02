@@ -61,8 +61,8 @@ func HandleValidatorError(c *gin.Context, err error) {
 	return
 }
 
-func List(c *gin.Context)  {
-	rsp, err := global.GoodsSrvClient.BannerList(context.Background(), &proto.MyEmpty{})
+func List(c *gin.Context) {
+	rsp, err := global.GoodsSrvClient.BannerList(context.Background(), &proto.MyEmptyWithGoods{})
 	if err != nil {
 		HandleGrpcErrorToHttp(err, c)
 		return
@@ -81,7 +81,7 @@ func List(c *gin.Context)  {
 	c.JSON(http.StatusOK, result)
 }
 
-func New(c *gin.Context)  {
+func New(c *gin.Context) {
 	bannerForm := forms.BannerForm{}
 	if err := c.ShouldBindJSON(&bannerForm); err != nil {
 		HandleValidatorError(c, err)
@@ -90,7 +90,7 @@ func New(c *gin.Context)  {
 
 	rsp, err := global.GoodsSrvClient.CreateBanner(context.Background(), &proto.BannerRequest{
 		Index: int32(bannerForm.Index),
-		Url: bannerForm.Url,
+		Url:   bannerForm.Url,
 		Image: bannerForm.Image,
 	})
 
@@ -122,11 +122,10 @@ func Update(c *gin.Context) {
 		return
 	}
 
-
 	_, err = global.GoodsSrvClient.UpdateBanner(context.Background(), &proto.BannerRequest{
-		Id: int32(i),
+		Id:    int32(i),
 		Index: int32(bannerForm.Index),
-		Url: bannerForm.Url,
+		Url:   bannerForm.Url,
 	})
 	if err != nil {
 		HandleGrpcErrorToHttp(err, c)
@@ -136,7 +135,7 @@ func Update(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func Delete(c *gin.Context)  {
+func Delete(c *gin.Context) {
 	id := c.Param("id")
 	i, err := strconv.ParseInt(id, 10, 32)
 	if err != nil {

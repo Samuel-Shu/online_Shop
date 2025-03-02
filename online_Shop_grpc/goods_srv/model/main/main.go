@@ -12,7 +12,7 @@ import (
 // 使用gorm的autoMigrate函数进行表迁移
 func main() {
 	var err error
-	DSN := "root:sx221410@tcp(192.168.137.134:3306)/onlineShop_goods_srv?charset=utf8&parseTime=True&loc=Local"
+	DSN := "root:sx221410@tcp(192.168.220.128:3306)/onlineshop_goods_srv?charset=utf8&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN:                       DSN,   // DSN data source name
 		DefaultStringSize:         256,   // string 类型字段的默认长度

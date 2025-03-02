@@ -1,14 +1,16 @@
 {
-    "name": "user-web",
-    "port": 7071,
-    "user_srv": {
-        "name": "user-srv"
+    "name": "goods-web",
+    "host": "192.168.220.1",
+    "port": 7072,
+    "tags": ["goods", "Samuel-Shu", "onlineShop", "web"],
+    "goods_srv": {
+        "name": "goods-srv"
     },
     "jwt": {
         "key": "1oyJ~LbGx%$hoPa&iVsB"
     },
     "redis": {
-        "ip": "192.168.137.134",
+        "ip": "192.168.220.128",
         "port": 6379,
         "expire": 60
     },
@@ -17,7 +19,7 @@
         "secretKey": "qgajgbzollmwdiai"
     },
     "consul": {
-        "host": "192.168.137.134",
+        "host": "192.168.220.128",
         "port": 8500
     }
 }

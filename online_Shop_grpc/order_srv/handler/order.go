@@ -78,12 +78,12 @@ func (o *OrderServer) CreateCartItem(c context.Context, req *proto.CartItemReque
 	return &proto.ShopCartInfoResponse{Id: int32(shopCart.ID)}, nil
 }
 
-func (o *OrderServer) UpdateCartItem(c context.Context, req *proto.CartItemRequest) (*proto.MyEmpty, error) {
+func (o *OrderServer) UpdateCartItem(c context.Context, req *proto.CartItemRequest) (*proto.MyEmptyWithOrder, error) {
 	//更新购物车记录，更新数量和选中状态
 
 	var shopCart model.ShoppingCart
 
-	if r := global.DB.First(&shopCart, req.Id); r.RowsAffected == 1 {
+	if r := global.DB.First(&shopCart, req.Id); r.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "购物车记录不存在")
 	}
 
@@ -94,16 +94,16 @@ func (o *OrderServer) UpdateCartItem(c context.Context, req *proto.CartItemReque
 
 	global.DB.Save(&shopCart)
 
-	return &proto.MyEmpty{}, nil
+	return &proto.MyEmptyWithOrder{}, nil
 }
 
-func (o *OrderServer) DeleteCartItem(c context.Context, req *proto.CartItemRequest) (*proto.MyEmpty, error) {
+func (o *OrderServer) DeleteCartItem(c context.Context, req *proto.CartItemRequest) (*proto.MyEmptyWithOrder, error) {
 
 	if r := global.DB.Delete(&model.ShoppingCart{}, req.Id); r.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "购物车记录不存在")
 	}
 
-	return &proto.MyEmpty{}, nil
+	return &proto.MyEmptyWithOrder{}, nil
 }
 
 func (o *OrderServer) OrderList(c context.Context, req *proto.OrderFilterRequest) (*proto.OrderListResponse, error) {
@@ -228,12 +228,12 @@ func (o *OrderServer) CreateOrder(c context.Context, req *proto.OrderRequest) (*
 	//生成订单表
 	tx := global.DB.Begin()
 	order := model.OrderInfo{
-		OrderSn: GenerateOrderSn(req.UserId),
-		OrderMount: orderAmount,
-		Address: req.Address,
-		SignerName: req.Name,
+		OrderSn:      GenerateOrderSn(req.UserId),
+		OrderMount:   orderAmount,
+		Address:      req.Address,
+		SignerName:   req.Name,
 		SignerMobile: req.Mobile,
-		Post: req.Post,
+		Post:         req.Post,
 	}
 
 	if r := tx.Save(&order); r.RowsAffected == 0 {
@@ -262,10 +262,10 @@ func (o *OrderServer) CreateOrder(c context.Context, req *proto.OrderRequest) (*
 	return &proto.OrderInfoResponse{Id: int32(order.ID), OrderSn: order.OrderSn, Total: order.OrderMount}, nil
 }
 
-func (o *OrderServer) UpdateOrderStatus(c context.Context, req *proto.OrderStatus) (*proto.MyEmpty, error) {
+func (o *OrderServer) UpdateOrderStatus(c context.Context, req *proto.OrderStatus) (*proto.MyEmptyWithOrder, error) {
 	if r := global.DB.Model(&model.OrderInfo{}).Where("order_sn = ?", req.OrderSn).Update("status", req.Status); r.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "订单不存在")
 	}
 
-	return &proto.MyEmpty{}, nil
+	return &proto.MyEmptyWithOrder{}, nil
 }

@@ -15,7 +15,7 @@ type InventoryServer struct {
 	proto.UnimplementedInventoryServer
 }
 
-func (i *InventoryServer) SetInv(c context.Context, req *proto.GoodsInvInfo) (*proto.MyEmpty, error) {
+func (i *InventoryServer) SetInv(c context.Context, req *proto.GoodsInvInfo) (*proto.MyEmptyWithInv, error) {
 	//设置库存，
 	var inv model.Inventory
 	global.DB.First(&inv, req.GoodsId)
@@ -24,7 +24,7 @@ func (i *InventoryServer) SetInv(c context.Context, req *proto.GoodsInvInfo) (*p
 
 	global.DB.Save(&inv)
 
-	return &proto.MyEmpty{}, nil
+	return &proto.MyEmptyWithInv{}, nil
 }
 
 func (i *InventoryServer) InvDetail(c context.Context, req *proto.GoodsInvInfo) (*proto.GoodsInvInfo, error) {
@@ -38,7 +38,7 @@ func (i *InventoryServer) InvDetail(c context.Context, req *proto.GoodsInvInfo) 
 	}, nil
 }
 
-func (i *InventoryServer) Sell(c context.Context, req *proto.SellInfo) (*proto.MyEmpty, error) {
+func (i *InventoryServer) Sell(c context.Context, req *proto.SellInfo) (*proto.MyEmptyWithInv, error) {
 	//1、此处需要考虑到事务
 	//如果购物车存在三个商品，数量分别是[1:15, 2:6, 3:7]
 	//此时如果第一个商品数量满足并且扣减成功，但是第二个商品数量不足无法扣减
@@ -72,10 +72,10 @@ func (i *InventoryServer) Sell(c context.Context, req *proto.SellInfo) (*proto.M
 		}
 	}
 	tx.Commit()
-	return &proto.MyEmpty{}, nil
+	return &proto.MyEmptyWithInv{}, nil
 }
 
-func (i *InventoryServer) Reback(c context.Context, req *proto.SellInfo) (*proto.MyEmpty, error) {
+func (i *InventoryServer) Reback(c context.Context, req *proto.SellInfo) (*proto.MyEmptyWithInv, error) {
 	//库存归还：1、订单超时归还；2、订单创建失败，归还之前扣减的库存；3、手动归还
 	tx := global.DB.Begin()
 	for _, goodInfo := range req.GoodsInfo {
@@ -100,5 +100,5 @@ func (i *InventoryServer) Reback(c context.Context, req *proto.SellInfo) (*proto
 		}
 	}
 	tx.Commit()
-	return &proto.MyEmpty{}, nil
+	return &proto.MyEmptyWithInv{}, nil
 }
