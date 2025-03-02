@@ -23,7 +23,7 @@ type Address struct {
 
 	User         int32  `gorm:"type:int;index"`
 	Province     string `gorm:"type:varchar(10)"`
-	CIty         string `gorm:"type:varchar(10)"`
+	City         string `gorm:"type:varchar(10)"`
 	District     string `gorm:"type:varchar(20)"`
 	Address      string `gorm:"type:varchar(100)"`
 	SignerName   string `gorm:"type:varchar(20)"`
@@ -40,5 +40,5 @@ type UserFav struct {
 }
 
 func (UserFav) TableName() string {
-	return "userfav.proto"
+	return "userfav"
 }

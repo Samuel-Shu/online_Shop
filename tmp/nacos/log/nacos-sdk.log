@@ -654,3 +654,11 @@ runtime.goexit
 2025-03-02T13:00:02.747+0800	INFO	util/common.go:96	Local IP:192.168.220.1
 2025-03-02T13:00:02.911+0800	INFO	rpc/rpc_client.go:234	config-0-78b6e707-359c-4c1c-a153-423192ffefc4 success to connect to server {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848} on start up, connectionId=1740891602684_192.168.220.1_3187
 2025-03-02T13:00:02.967+0800	DEBUG	cache/disk_cache.go:136	no need to delete Config Encrypted Data Key cache file, file path ../tmp/nacos/cache\config\encrypted-data-key\userop-srv.json@@dev@@e382cec6-241f-4258-9ae2-125f97232a1f, file doesn't exist.
+2025-03-02T14:15:59.026+0800	ERROR	cache/disk_cache.go:193	read Config Content failed. cause file doesn't exist, file path: ../tmp/nacos/cache\config\userop-srv.json@@dev@@e382cec6-241f-4258-9ae2-125f97232a1f_failover.
+2025-03-02T14:15:59.028+0800	DEBUG	rpc/rpc_client.go:290	config-0-471c7692-aa72-455a-8930-187b3880aa4a register server push request:ConfigChangeNotifyRequest handler:ConfigChangeNotifyRequestHandler
+2025-03-02T14:15:59.028+0800	DEBUG	rpc/rpc_client.go:290	config-0-471c7692-aa72-455a-8930-187b3880aa4a register server push request:ConnectResetRequest handler:ConnectResetRequestHandler
+2025-03-02T14:15:59.028+0800	DEBUG	rpc/rpc_client.go:290	config-0-471c7692-aa72-455a-8930-187b3880aa4a register server push request:ClientDetectionRequest handler:ClientDetectionRequestHandler
+2025-03-02T14:15:59.028+0800	INFO	rpc/rpc_client.go:224	[RpcClient.Start] config-0-471c7692-aa72-455a-8930-187b3880aa4a try to connect to server on start up, server: {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848}
+2025-03-02T14:15:59.059+0800	INFO	util/common.go:96	Local IP:192.168.220.1
+2025-03-02T14:15:59.165+0800	INFO	rpc/rpc_client.go:234	config-0-471c7692-aa72-455a-8930-187b3880aa4a success to connect to server {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848} on start up, connectionId=1740896158976_192.168.220.1_6362
+2025-03-02T14:15:59.183+0800	DEBUG	cache/disk_cache.go:136	no need to delete Config Encrypted Data Key cache file, file path ../tmp/nacos/cache\config\encrypted-data-key\userop-srv.json@@dev@@e382cec6-241f-4258-9ae2-125f97232a1f, file doesn't exist.

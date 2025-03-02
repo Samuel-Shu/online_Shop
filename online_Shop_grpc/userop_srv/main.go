@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"net"
 	"online_Shop/userop_srv/global"
+	"online_Shop/userop_srv/handler"
 	"online_Shop/userop_srv/initialize"
 	"online_Shop/userop_srv/proto"
 	"online_Shop/userop_srv/utils"
@@ -27,7 +28,6 @@ func main() {
 	initialize.InitLogger()
 	initialize.InitConfig()
 	initialize.InitDb()
-	initialize.InitRedisLock()
 
 	zap.S().Info("ip地址：", *IP)
 	if *PORT == 0 {
@@ -38,9 +38,9 @@ func main() {
 
 	server := grpc.NewServer()
 	//proto.RegisterInventoryServer(server, &handler.InventoryServer{})
-	proto.RegisterAddressServer(server, &proto.UnimplementedAddressServer{})
-	proto.RegisterMessageServer(server, &proto.UnimplementedMessageServer{})
-	proto.RegisterUserFavServer(server, &proto.UnimplementedUserFavServer{})
+	proto.RegisterAddressServer(server, &handler.UserOpServer{})
+	proto.RegisterMessageServer(server, &handler.UserOpServer{})
+	proto.RegisterUserFavServer(server, &handler.UserOpServer{})
 	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", *IP, *PORT))
 	if err != nil {
 		panic("端口监听失败" + err.Error())

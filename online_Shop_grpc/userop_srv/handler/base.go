@@ -1,6 +1,15 @@
 package handler
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"online_Shop/userop_srv/proto"
+)
+
+type UserOpServer struct {
+	proto.UnimplementedMessageServer
+	proto.UnimplementedUserFavServer
+	proto.UnimplementedAddressServer
+}
 
 // Paginate 分页查询
 func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
