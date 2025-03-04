@@ -1,0 +1,19 @@
+{
+    "name": "userop-web",
+    "port": 7074,
+    "host": "192.168.220.1",
+    "tags": ["userop", "Samuel-Shu", "onlineShop", "web"],
+    "goods_srv": {
+        "name": "goods-srv"
+    },
+    "userop_srv": {
+        "name": "userop-srv"
+    },
+    "jwt": {
+        "key": "1oyJ~LbGx%$hoPa&iVsB"
+    },
+    "consul": {
+        "host": "192.168.220.128",
+        "port": 8500
+    }
+}

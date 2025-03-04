@@ -1,6 +1,7 @@
 package global
 
 import (
+	"github.com/olivere/elastic/v7"
 	_ "gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	_ "gorm.io/gorm/schema"
@@ -8,9 +9,8 @@ import (
 )
 
 var (
-	DB *gorm.DB
+	DB           *gorm.DB
 	ServerConfig = &config.ServerConfig{}
-	NacosConfig = &config.NacosConfig{}
+	NacosConfig  = &config.NacosConfig{}
+	EsClient     *elastic.Client
 )
-
-

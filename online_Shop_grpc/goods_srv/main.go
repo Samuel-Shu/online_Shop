@@ -28,7 +28,7 @@ func main() {
 	initialize.InitLogger()
 	initialize.InitConfig()
 	initialize.InitDb()
-
+	initialize.InitEs()
 	zap.S().Info("ip地址：", *IP)
 	if *PORT == 0 {
 		*PORT, _ = utils.GetFreePort()

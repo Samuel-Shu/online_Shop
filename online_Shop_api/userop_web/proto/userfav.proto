@@ -1,0 +1,27 @@
+syntax = "proto3";
+option go_package = ".;proto";
+
+service UserFav {
+  rpc GetFavList (UserFavRequest) returns (UserFavListResponse); // 过滤收藏信息
+  rpc AddUserFav (UserFavRequest) returns (EmptyWithUserFav); // 添加收藏
+  rpc DeleteUserFav (UserFavRequest) returns (EmptyWithUserFav); // 删除收藏
+  rpc GetUserFavDetail (UserFavRequest) returns (EmptyWithUserFav); // 查询用户是否收藏某一个商品
+}
+
+message EmptyWithUserFav {
+}
+
+message UserFavRequest {
+  int32 userId = 1;
+  int32 goodsId = 2;
+}
+
+message UserFavResponse {
+  int32 userId = 1;
+  int32 goodsId = 2;
+}
+
+message UserFavListResponse {
+  int32 total = 1;
+  repeated UserFavResponse data = 2;
+}
