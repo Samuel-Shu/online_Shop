@@ -69,6 +69,7 @@ type Goods struct {
 	GoodsFrontImage string   `gorm:"type:varchar(200);not null"`
 }
 
+// AfterCreate hook函数，在数据库数据插入后执行（数据同步至ES）
 func (g *Goods) AfterCreate(tx *gorm.DB) (err error) {
 	esModel := EsGoods{
 		ID:          int32(g.ID),
@@ -92,5 +93,40 @@ func (g *Goods) AfterCreate(tx *gorm.DB) (err error) {
 		return err
 	}
 
+	return nil
+}
+
+// AfterUpdate hook函数，在数据库数据修改后执行（数据同步至ES）
+func (g *Goods) AfterUpdate(tx *gorm.DB) (err error) {
+	esModel := EsGoods{
+		ID:          int32(g.ID),
+		CategoryID:  int32(g.CategoryID),
+		BrandsID:    int32(g.BrandsID),
+		OnSale:      g.OnSale,
+		ShipFree:    g.ShipFree,
+		IsNew:       g.IsNew,
+		IsHot:       g.IsHot,
+		Name:        g.Name,
+		ClickNum:    g.ClickNum,
+		SoldNum:     g.SoldNum,
+		FavNum:      g.FavNum,
+		MarketPrice: g.MarketPrice,
+		GoodsBrief:  g.GoodsBrief,
+		ShopPrice:   g.ShopPrice,
+	}
+
+	_, err = global.EsClient.Update().Index(esModel.GetIndexName()).Doc(esModel).Id(strconv.Itoa(int(g.ID))).Do(context.Background())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (g *Goods) AfterDelete(tx *gorm.DB) (err error) {
+	_, err = global.EsClient.Delete().Index(EsGoods{}.GetIndexName()).Id(strconv.Itoa(int(g.ID))).Do(context.Background())
+	if err != nil {
+		return err
+	}
 	return nil
 }

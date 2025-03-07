@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
+	"github.com/apache/rocketmq-client-go/v2"
+	"github.com/apache/rocketmq-client-go/v2/consumer"
+	"github.com/apache/rocketmq-client-go/v2/primitive"
 	"github.com/hashicorp/consul/api"
 	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
@@ -18,6 +22,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 func main() {
@@ -83,6 +88,32 @@ func main() {
 			panic("grpc启动失败" + err.Error())
 		}
 	}()
+
+	// 监听库存归还topic
+	c, _ := rocketmq.NewPushConsumer(
+		consumer.WithNameServer([]string{"192.168.220.128:9876"}),
+		consumer.WithGroupName("onlineshop-inventory"),
+	)
+	if err := c.Subscribe("order_reback", consumer.MessageSelector{}, func(ctx context.Context,
+		msgs ...*primitive.MessageExt) (consumer.ConsumeResult, error) {
+		for i := range msgs {
+			fmt.Println("获取到值：", msgs[i].Message.Body)
+		}
+		return consumer.ConsumeSuccess, nil
+	}); err != nil {
+		panic("订阅消息失败")
+	}
+
+	err = c.Start()
+	if err != nil {
+		return
+	}
+
+	time.Sleep(time.Second)
+	err = c.Shutdown()
+	if err != nil {
+		return
+	}
 
 	//接受终止信号
 	quit := make(chan os.Signal)

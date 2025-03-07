@@ -4,6 +4,8 @@ import (
 	"context"
 	_ "crypto/md5"
 	"fmt"
+	"github.com/apache/rocketmq-client-go/v2/consumer"
+	"github.com/apache/rocketmq-client-go/v2/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"online_Shop/inventory_srv/global"
@@ -101,4 +103,13 @@ func (i *InventoryServer) Reback(c context.Context, req *proto.SellInfo) (*proto
 	}
 	tx.Commit()
 	return &proto.MyEmptyWithInv{}, nil
+}
+
+func AutoReback(ctx context.Context, msgs ...*primitive.MessageExt) (consumer.ConsumeResult, error) {
+	for i := range msgs {
+		// 既然是归还库存，那么应当知道具体每件商品应该归还多少，但是要防止重复归还
+		// 所以这个接口应该确保幂等性，不能因为消息的重复发送导致一个订单的库存归还多次，没有扣减的库存不能归还
+		// 如何确保这些问题全部得以解决：新建一张表，这张表记录了详细的订单扣减细节，以及归还细节
+
+	}
 }

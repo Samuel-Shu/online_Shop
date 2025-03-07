@@ -31,6 +31,7 @@ func main() {
 	}
 	err = db.AutoMigrate(
 		&model.Inventory{},
+		&model.StockSellDetail{},
 	)
 	if err != nil {
 		panic(error.Error(err))

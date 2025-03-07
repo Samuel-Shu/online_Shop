@@ -8,6 +8,7 @@ import (
 	"github.com/olivere/elastic/v7"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"gorm.io/gorm"
 	"online_Shop/goods_srv/global"
 	"online_Shop/goods_srv/model"
 	"online_Shop/goods_srv/proto"
@@ -188,7 +189,15 @@ func (g *GoodsServer) CreateGoods(c context.Context, req *proto.CreateGoodsInfo)
 		OnSale:          req.OnSale,
 	}
 
-	global.DB.Save(&goods)
+	// 采用事务来维护MySQL与ES数据一致性问题
+	tx := global.DB.Begin()
+
+	save := tx.Save(&goods)
+	if save.Error != nil {
+		tx.Rollback()
+		return nil, save.Error
+	}
+	tx.Commit()
 
 	return &proto.GoodsInfoResponse{
 		Id: int32(goods.ID),
@@ -196,7 +205,7 @@ func (g *GoodsServer) CreateGoods(c context.Context, req *proto.CreateGoodsInfo)
 }
 
 func (g *GoodsServer) DeleteGoods(c context.Context, req *proto.DeleteGoodsInfo) (*proto.MyEmpty, error) {
-	if r := global.DB.Delete(&model.Goods{}, req.Id); r.RowsAffected == 0 {
+	if r := global.DB.Delete(&model.Goods{Model: gorm.Model{ID: uint(req.Id)}}, req.Id); r.RowsAffected == 0 {
 		return nil, status.Errorf(codes.InvalidArgument, "商品不存在")
 	}
 
