@@ -3,10 +3,12 @@ package initialize
 import (
 	"fmt"
 	_ "github.com/mbobakov/grpc-consul-resolver"
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"online_Shop_api/order_web/global"
 	"online_Shop_api/order_web/proto"
+	"online_Shop_api/order_web/utils/otgrpc"
 )
 
 func InitSrvConn() {
@@ -15,6 +17,8 @@ func InitSrvConn() {
 		fmt.Sprintf("consul://%s:%d/%s?wait=14s", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port, global.ServerConfig.GoodsSrvInfo.Name),
 		grpc.WithInsecure(),
 		grpc.WithDefaultServiceConfig(`{"localBalancingPolicy": "round_robin"}`),
+		grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(opentracing.GlobalTracer())),
+
 	)
 	if err != nil {
 		zap.S().Fatal("【InitSrvConn】连接【商品服务失败】")
@@ -24,6 +28,8 @@ func InitSrvConn() {
 		fmt.Sprintf("consul://%s:%d/%s?wait=14s", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port, global.ServerConfig.OrderSrvInfo.Name),
 		grpc.WithInsecure(),
 		grpc.WithDefaultServiceConfig(`{"localBalancingPolicy": "round_robin"}`),
+		grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(opentracing.GlobalTracer())),
+
 	)
 	if err != nil {
 		zap.S().Fatal("【InitSrvConn】连接【订单服务失败】")
@@ -33,6 +39,8 @@ func InitSrvConn() {
 		fmt.Sprintf("consul://%s:%d/%s?wait=14s", global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port, global.ServerConfig.InventorySrvInfo.Name),
 		grpc.WithInsecure(),
 		grpc.WithDefaultServiceConfig(`{"localBalancingPolicy": "round_robin"}`),
+		grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(opentracing.GlobalTracer())),
+		
 	)
 	if err != nil {
 		zap.S().Fatal("【InitSrvConn】连接【库存服务失败】")

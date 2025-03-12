@@ -710,3 +710,43 @@ runtime.goexit
 2025-03-04T20:53:30.384+0800	INFO	util/common.go:96	Local IP:192.168.220.1
 2025-03-04T20:53:30.488+0800	INFO	rpc/rpc_client.go:234	config-0-195a9f16-bd3a-4f8c-b74f-df3ad6ecc633 success to connect to server {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848} on start up, connectionId=1741092809725_192.168.220.1_8589
 2025-03-04T20:53:30.499+0800	DEBUG	cache/disk_cache.go:136	no need to delete Config Encrypted Data Key cache file, file path ../tmp/nacos/cache\config\encrypted-data-key\goods-srv.json@@dev@@2f9a8162-331f-46b7-90a8-00f4b178794b, file doesn't exist.
+2025-03-10T21:50:37.418+0800	ERROR	cache/disk_cache.go:193	read Config Content failed. cause file doesn't exist, file path: ../tmp/nacos/cache\config\goods-srv.json@@dev@@2f9a8162-331f-46b7-90a8-00f4b178794b_failover.
+2025-03-10T21:50:37.420+0800	DEBUG	rpc/rpc_client.go:290	config-0-dd8ad8d2-ba6c-47b5-a227-8b115afe6cb3 register server push request:ConfigChangeNotifyRequest handler:ConfigChangeNotifyRequestHandler
+2025-03-10T21:50:37.420+0800	DEBUG	rpc/rpc_client.go:290	config-0-dd8ad8d2-ba6c-47b5-a227-8b115afe6cb3 register server push request:ConnectResetRequest handler:ConnectResetRequestHandler
+2025-03-10T21:50:37.420+0800	DEBUG	rpc/rpc_client.go:290	config-0-dd8ad8d2-ba6c-47b5-a227-8b115afe6cb3 register server push request:ClientDetectionRequest handler:ClientDetectionRequestHandler
+2025-03-10T21:50:37.420+0800	INFO	rpc/rpc_client.go:224	[RpcClient.Start] config-0-dd8ad8d2-ba6c-47b5-a227-8b115afe6cb3 try to connect to server on start up, server: {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848}
+2025-03-10T21:50:37.456+0800	INFO	util/common.go:96	Local IP:192.168.220.1
+2025-03-10T21:50:37.717+0800	INFO	rpc/rpc_client.go:234	config-0-dd8ad8d2-ba6c-47b5-a227-8b115afe6cb3 success to connect to server {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848} on start up, connectionId=1741614636237_192.168.220.1_13605
+2025-03-10T21:50:37.763+0800	DEBUG	cache/disk_cache.go:136	no need to delete Config Encrypted Data Key cache file, file path ../tmp/nacos/cache\config\encrypted-data-key\goods-srv.json@@dev@@2f9a8162-331f-46b7-90a8-00f4b178794b, file doesn't exist.
+2025-03-10T21:51:17.515+0800	ERROR	cache/disk_cache.go:193	read Config Content failed. cause file doesn't exist, file path: ../tmp/nacos/cache\config\goods-web.json@@dev@@2f9a8162-331f-46b7-90a8-00f4b178794b_failover.
+2025-03-10T21:51:17.516+0800	DEBUG	rpc/rpc_client.go:290	config-0-ca320959-7284-4a17-b642-1d59aeceba8a register server push request:ConfigChangeNotifyRequest handler:ConfigChangeNotifyRequestHandler
+2025-03-10T21:51:17.516+0800	DEBUG	rpc/rpc_client.go:290	config-0-ca320959-7284-4a17-b642-1d59aeceba8a register server push request:ConnectResetRequest handler:ConnectResetRequestHandler
+2025-03-10T21:51:17.516+0800	DEBUG	rpc/rpc_client.go:290	config-0-ca320959-7284-4a17-b642-1d59aeceba8a register server push request:ClientDetectionRequest handler:ClientDetectionRequestHandler
+2025-03-10T21:51:17.516+0800	INFO	rpc/rpc_client.go:224	[RpcClient.Start] config-0-ca320959-7284-4a17-b642-1d59aeceba8a try to connect to server on start up, server: {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848}
+2025-03-10T21:51:17.549+0800	INFO	util/common.go:96	Local IP:192.168.220.1
+2025-03-10T21:51:17.653+0800	INFO	rpc/rpc_client.go:234	config-0-ca320959-7284-4a17-b642-1d59aeceba8a success to connect to server {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848} on start up, connectionId=1741614676288_192.168.220.1_13679
+2025-03-10T21:51:17.659+0800	DEBUG	cache/disk_cache.go:136	no need to delete Config Encrypted Data Key cache file, file path ../tmp/nacos/cache\config\encrypted-data-key\goods-web.json@@dev@@2f9a8162-331f-46b7-90a8-00f4b178794b, file doesn't exist.
+2025-03-10T22:36:40.546+0800	ERROR	cache/disk_cache.go:193	read Config Content failed. cause file doesn't exist, file path: ../tmp/nacos/cache\config\goods-srv.json@@dev@@2f9a8162-331f-46b7-90a8-00f4b178794b_failover.
+2025-03-10T22:36:40.546+0800	DEBUG	rpc/rpc_client.go:290	config-0-5a4c8762-cbed-498e-be4f-013926c8a356 register server push request:ConfigChangeNotifyRequest handler:ConfigChangeNotifyRequestHandler
+2025-03-10T22:36:40.546+0800	DEBUG	rpc/rpc_client.go:290	config-0-5a4c8762-cbed-498e-be4f-013926c8a356 register server push request:ConnectResetRequest handler:ConnectResetRequestHandler
+2025-03-10T22:36:40.546+0800	DEBUG	rpc/rpc_client.go:290	config-0-5a4c8762-cbed-498e-be4f-013926c8a356 register server push request:ClientDetectionRequest handler:ClientDetectionRequestHandler
+2025-03-10T22:36:40.546+0800	INFO	rpc/rpc_client.go:224	[RpcClient.Start] config-0-5a4c8762-cbed-498e-be4f-013926c8a356 try to connect to server on start up, server: {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848}
+2025-03-10T22:36:40.583+0800	INFO	util/common.go:96	Local IP:192.168.220.1
+2025-03-10T22:36:40.687+0800	INFO	rpc/rpc_client.go:234	config-0-5a4c8762-cbed-498e-be4f-013926c8a356 success to connect to server {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848} on start up, connectionId=1741617400545_192.168.220.1_1072
+2025-03-10T22:36:40.693+0800	DEBUG	cache/disk_cache.go:136	no need to delete Config Encrypted Data Key cache file, file path ../tmp/nacos/cache\config\encrypted-data-key\goods-srv.json@@dev@@2f9a8162-331f-46b7-90a8-00f4b178794b, file doesn't exist.
+2025-03-10T22:37:03.396+0800	ERROR	cache/disk_cache.go:193	read Config Content failed. cause file doesn't exist, file path: ../tmp/nacos/cache\config\goods-web.json@@dev@@2f9a8162-331f-46b7-90a8-00f4b178794b_failover.
+2025-03-10T22:37:03.397+0800	DEBUG	rpc/rpc_client.go:290	config-0-0fcf7701-b22d-42e5-b520-5f7f3c3665bf register server push request:ConfigChangeNotifyRequest handler:ConfigChangeNotifyRequestHandler
+2025-03-10T22:37:03.397+0800	DEBUG	rpc/rpc_client.go:290	config-0-0fcf7701-b22d-42e5-b520-5f7f3c3665bf register server push request:ConnectResetRequest handler:ConnectResetRequestHandler
+2025-03-10T22:37:03.397+0800	DEBUG	rpc/rpc_client.go:290	config-0-0fcf7701-b22d-42e5-b520-5f7f3c3665bf register server push request:ClientDetectionRequest handler:ClientDetectionRequestHandler
+2025-03-10T22:37:03.397+0800	INFO	rpc/rpc_client.go:224	[RpcClient.Start] config-0-0fcf7701-b22d-42e5-b520-5f7f3c3665bf try to connect to server on start up, server: {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848}
+2025-03-10T22:37:03.426+0800	INFO	util/common.go:96	Local IP:192.168.220.1
+2025-03-10T22:37:03.531+0800	INFO	rpc/rpc_client.go:234	config-0-0fcf7701-b22d-42e5-b520-5f7f3c3665bf success to connect to server {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848} on start up, connectionId=1741617423388_192.168.220.1_1094
+2025-03-10T22:37:03.537+0800	DEBUG	cache/disk_cache.go:136	no need to delete Config Encrypted Data Key cache file, file path ../tmp/nacos/cache\config\encrypted-data-key\goods-web.json@@dev@@2f9a8162-331f-46b7-90a8-00f4b178794b, file doesn't exist.
+2025-03-10T22:49:33.321+0800	ERROR	cache/disk_cache.go:193	read Config Content failed. cause file doesn't exist, file path: ../tmp/nacos/cache\config\goods-web.json@@dev@@2f9a8162-331f-46b7-90a8-00f4b178794b_failover.
+2025-03-10T22:49:33.321+0800	DEBUG	rpc/rpc_client.go:290	config-0-36f33327-f10e-41f9-86b0-7b73dfd59186 register server push request:ConfigChangeNotifyRequest handler:ConfigChangeNotifyRequestHandler
+2025-03-10T22:49:33.321+0800	DEBUG	rpc/rpc_client.go:290	config-0-36f33327-f10e-41f9-86b0-7b73dfd59186 register server push request:ConnectResetRequest handler:ConnectResetRequestHandler
+2025-03-10T22:49:33.321+0800	DEBUG	rpc/rpc_client.go:290	config-0-36f33327-f10e-41f9-86b0-7b73dfd59186 register server push request:ClientDetectionRequest handler:ClientDetectionRequestHandler
+2025-03-10T22:49:33.321+0800	INFO	rpc/rpc_client.go:224	[RpcClient.Start] config-0-36f33327-f10e-41f9-86b0-7b73dfd59186 try to connect to server on start up, server: {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848}
+2025-03-10T22:49:33.352+0800	INFO	util/common.go:96	Local IP:192.168.220.1
+2025-03-10T22:49:33.455+0800	INFO	rpc/rpc_client.go:234	config-0-36f33327-f10e-41f9-86b0-7b73dfd59186 success to connect to server {serverIp:192.168.220.128 serverPort:8848 serverGrpcPort:9848} on start up, connectionId=1741618173312_192.168.220.1_1458
+2025-03-10T22:49:33.461+0800	DEBUG	cache/disk_cache.go:136	no need to delete Config Encrypted Data Key cache file, file path ../tmp/nacos/cache\config\encrypted-data-key\goods-web.json@@dev@@2f9a8162-331f-46b7-90a8-00f4b178794b, file doesn't exist.

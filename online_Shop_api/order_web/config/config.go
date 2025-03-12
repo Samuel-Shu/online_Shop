@@ -33,6 +33,7 @@ type ServerConfig struct {
 	ConsulInfo       ConsulConfig   `mapstructure:"consul" json:"consul"`
 	OssInfo          OssConfig      `mapstructure:"oss" json:"oss"`
 	AlipayInfo       AlipayConfig   `mapstructure:"alipay" json:"alipay"`
+	JaegerInfo       JaegerConfig   `mapstructure:"jaeger" json:"jaeger"`
 }
 
 type OssConfig struct {
@@ -43,6 +44,12 @@ type OssConfig struct {
 	PictureBucket string `mapstructure:"picture_bucket" json:"picture_bucket"`
 	DomainVideo   string `mapstructure:"domain_video" json:"domain_video"`
 	DomainPicture string `mapstructure:"domain_picture" json:"domain_picture"`
+}
+
+type JaegerConfig struct {
+	Name string `mapstructure:"name" json:"name"`
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
 }
 
 type NacosConfig struct {

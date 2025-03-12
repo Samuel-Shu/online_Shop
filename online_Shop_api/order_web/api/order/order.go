@@ -37,7 +37,7 @@ func List(c *gin.Context) {
 	pagePerNumsInt, _ := strconv.Atoi(pagePerNums)
 	request.PagePerNums = int32(pagePerNumsInt)
 
-	rsp, err := global.OrderSrvClient.OrderList(context.Background(), &request)
+	rsp, err := global.OrderSrvClient.OrderList(context.WithValue(context.Background(), "ginContext", c), &request)
 	if err != nil {
 		zap.S().Errorw("获取订单列表失败")
 		api.HandleGrpcErrorToHttp(err, c)
@@ -82,7 +82,7 @@ func New(c *gin.Context) {
 
 	userId, _ := c.Get("userId")
 
-	rsp, err := global.OrderSrvClient.CreateOrder(context.Background(), &proto.OrderRequest{
+	rsp, err := global.OrderSrvClient.CreateOrder(context.WithValue(context.Background(), "ginContext", c), &proto.OrderRequest{
 		UserId:  userId.(int32),
 		Name:    orderForm.Name,
 		Post:    orderForm.Post,
@@ -157,7 +157,7 @@ func Detail(c *gin.Context) {
 		request.UserId = userId.(int32)
 	}
 
-	rsp, err := global.OrderSrvClient.OrderDetail(context.Background(), &request)
+	rsp, err := global.OrderSrvClient.OrderDetail(context.WithValue(context.Background(), "ginContext", c), &request)
 	if err != nil {
 		zap.S().Errorw("查询订单详情失败")
 		api.HandleGrpcErrorToHttp(err, c)

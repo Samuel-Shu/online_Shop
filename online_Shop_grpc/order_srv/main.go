@@ -4,7 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"github.com/hashicorp/consul/api"
+	opentracing "github.com/opentracing/opentracing-go"
 	uuid "github.com/satori/go.uuid"
+	"github.com/uber/jaeger-client-go"
+	"github.com/uber/jaeger-client-go/config"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -15,6 +18,7 @@ import (
 	"online_Shop/order_srv/initialize"
 	"online_Shop/order_srv/proto"
 	"online_Shop/order_srv/utils"
+	"online_Shop/order_srv/utils/otgrpc"
 	"os"
 	"os/signal"
 	"syscall"
@@ -38,7 +42,24 @@ func main() {
 
 	zap.S().Info("port端口：", *PORT)
 
-	server := grpc.NewServer()
+	// 初始化jaeger
+	cfgJaeger := config.Configuration{
+		Sampler: &config.SamplerConfig{
+			Type:  jaeger.SamplerTypeConst,
+			Param: 1,
+		},
+		Reporter: &config.ReporterConfig{
+			LogSpans:           true,
+			LocalAgentHostPort: "192.168.220.128:6831",
+		},
+		ServiceName: "onlineShop",
+	}
+	tracer, closer, _ := cfgJaeger.NewTracer(config.Logger(jaeger.StdLogger))
+
+	opentracing.SetGlobalTracer(tracer)
+
+	server := grpc.NewServer(grpc.UnaryInterceptor(otgrpc.OpenTracingServerInterceptor(tracer)))
+
 	proto.RegisterOrderServer(server, &handler.OrderServer{})
 	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", *IP, *PORT))
 	if err != nil {
@@ -89,7 +110,7 @@ func main() {
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-
+	_ = closer.Close()
 	if err := client.Agent().ServiceDeregister(serverId); err != nil {
 		zap.S().Info("注销失败")
 	}

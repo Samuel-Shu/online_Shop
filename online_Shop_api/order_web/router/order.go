@@ -8,7 +8,7 @@ import (
 )
 
 func InitOrderRouter(Router *gin.RouterGroup) {
-	OrderRouter := Router.Group("orders").Use(middleware.JwtToken())
+	OrderRouter := Router.Group("orders").Use(middleware.JwtToken()).Use(middleware.Trace())
 	{
 		OrderRouter.GET("", order.List)       //订单列表接口
 		OrderRouter.POST("", order.New)       //新建订单接口

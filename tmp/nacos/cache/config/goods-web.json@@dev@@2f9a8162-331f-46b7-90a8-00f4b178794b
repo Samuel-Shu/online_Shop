@@ -21,5 +21,10 @@
     "consul": {
         "host": "192.168.220.128",
         "port": 8500
+    },
+    "jaeger": {
+        "name": "onlineShop",
+        "host":"192.168.220.128",
+        "port": 6831
     }
 }

@@ -108,7 +108,7 @@ func List(c *gin.Context) {
 	request.Brand = int32(brandIdInt)
 
 	//请求商品微服务【GoodsList】
-	r, err := global.GoodsSrvClient.GoodsList(context.Background(), request)
+	r, err := global.GoodsSrvClient.GoodsList(context.WithValue(context.Background(), "ginContext", c), request)
 	if err != nil {
 		zap.S().Errorw("[List] 查询【商品列表】失败")
 		HandleGrpcErrorToHttp(err, c)
@@ -128,7 +128,7 @@ func New(c *gin.Context) {
 		return
 	}
 	goodsClient := global.GoodsSrvClient
-	rsp, err := goodsClient.CreateGoods(context.Background(), &proto.CreateGoodsInfo{
+	rsp, err := goodsClient.CreateGoods(context.WithValue(context.Background(), "ginContext", c), &proto.CreateGoodsInfo{
 		Name:            GoodsForm.Name,
 		GoodsSn:         GoodsForm.GoodsSn,
 		Stocks:          GoodsForm.Stocks,
@@ -143,7 +143,7 @@ func New(c *gin.Context) {
 		CategoryId:      uint32(GoodsForm.CategoryId),
 		BrandId:         uint32(GoodsForm.Brand),
 	})
-	if err!= nil {
+	if err != nil {
 		HandleGrpcErrorToHttp(err, c)
 		return
 	}
@@ -152,7 +152,7 @@ func New(c *gin.Context) {
 	c.JSON(http.StatusOK, rsp)
 }
 
-func Detail(c *gin.Context)  {
+func Detail(c *gin.Context) {
 	id := c.Param("id")
 	idInt, err := strconv.ParseInt(id, 10, 32)
 	if err != nil {
@@ -160,7 +160,7 @@ func Detail(c *gin.Context)  {
 		return
 	}
 
-	r, err := global.GoodsSrvClient.GetGoodsDetail(context.Background(), &proto.GoodInfoRequest{
+	r, err := global.GoodsSrvClient.GetGoodsDetail(context.WithValue(context.Background(), "ginContext", c), &proto.GoodInfoRequest{
 		Id: int32(idInt),
 	})
 	if err != nil {
@@ -168,33 +168,33 @@ func Detail(c *gin.Context)  {
 	}
 
 	rsp := map[string]interface{}{
-		"id": r.Id,
-		"name": r.Name,
+		"id":          r.Id,
+		"name":        r.Name,
 		"goods_brief": r.GoodsBrief,
-		"desc": r.GoodsDesc,
-		"ship_free": r.ShipFree,
-		"images": r.Images,
+		"desc":        r.GoodsDesc,
+		"ship_free":   r.ShipFree,
+		"images":      r.Images,
 		"desc_images": r.DescImages,
 		"front_image": r.GoodsFrontImage,
-		"shop_price": r.ShopPrice,
+		"shop_price":  r.ShopPrice,
 		"category": map[string]interface{}{
-			"id": r.Category.Id,
+			"id":   r.Category.Id,
 			"name": r.Category.Name,
 		},
 		"brand": map[string]interface{}{
-			"id": r.Brand.Id,
+			"id":   r.Brand.Id,
 			"name": r.Brand.Name,
 			"logo": r.Brand.Logo,
 		},
-		"is_hot": r.IsHot,
-		"is_new": r.IsNew,
+		"is_hot":  r.IsHot,
+		"is_new":  r.IsNew,
 		"on_sale": r.OnSale,
 	}
 
 	c.JSON(http.StatusOK, rsp)
 }
 
-func Delete(c *gin.Context)  {
+func Delete(c *gin.Context) {
 
 	id := c.Param("id")
 	i, err := strconv.ParseInt(id, 10, 32)
@@ -203,7 +203,7 @@ func Delete(c *gin.Context)  {
 		return
 	}
 
-	_, err = global.GoodsSrvClient.DeleteGoods(context.Background(), &proto.DeleteGoodsInfo{
+	_, err = global.GoodsSrvClient.DeleteGoods(context.WithValue(context.Background(), "ginContext", c), &proto.DeleteGoodsInfo{
 		Id: int32(i),
 	})
 	if err != nil {
@@ -214,7 +214,7 @@ func Delete(c *gin.Context)  {
 	return
 }
 
-func Stocks(c *gin.Context)  {
+func Stocks(c *gin.Context) {
 	id := c.Param("id")
 	_, err := strconv.ParseInt(id, 10, 32)
 	if err != nil {
@@ -225,7 +225,7 @@ func Stocks(c *gin.Context)  {
 	return
 }
 
-func UpdateStatus(c *gin.Context)  {
+func UpdateStatus(c *gin.Context) {
 	goodsStatusForm := forms.GoodsStatusForm{}
 	if err := c.ShouldBindJSON(&goodsStatusForm); err != nil {
 		HandleValidatorError(c, err)
@@ -238,10 +238,10 @@ func UpdateStatus(c *gin.Context)  {
 		c.Status(http.StatusNotFound)
 		return
 	}
-	_, err = global.GoodsSrvClient.UpdateGoods(context.Background(), &proto.CreateGoodsInfo{
-		Id: int32(i),
-		IsHot: *goodsStatusForm.IsHot,
-		IsNew: *goodsStatusForm.IsNew,
+	_, err = global.GoodsSrvClient.UpdateGoods(context.WithValue(context.Background(), "ginContext", c), &proto.CreateGoodsInfo{
+		Id:     int32(i),
+		IsHot:  *goodsStatusForm.IsHot,
+		IsNew:  *goodsStatusForm.IsNew,
 		OnSale: *goodsStatusForm.OnSale,
 	})
 	if err != nil {
@@ -254,7 +254,7 @@ func UpdateStatus(c *gin.Context)  {
 	})
 }
 
-func Update(c *gin.Context)  {
+func Update(c *gin.Context) {
 	goodsForm := forms.GoodsForm{}
 	if err := c.ShouldBindJSON(&goodsForm); err != nil {
 		HandleValidatorError(c, err)
@@ -267,7 +267,7 @@ func Update(c *gin.Context)  {
 		c.Status(http.StatusNotFound)
 		return
 	}
-	if _, err := global.GoodsSrvClient.UpdateGoods(context.Background(), &proto.CreateGoodsInfo{
+	if _, err := global.GoodsSrvClient.UpdateGoods(context.WithValue(context.Background(), "ginContext", c), &proto.CreateGoodsInfo{
 		Id:              int32(i),
 		Name:            goodsForm.Name,
 		GoodsSn:         goodsForm.GoodsSn,
@@ -279,12 +279,11 @@ func Update(c *gin.Context)  {
 		DescImages:      goodsForm.DescImages,
 		GoodsFrontImage: goodsForm.FrontImage,
 		CategoryId:      uint32(goodsForm.CategoryId),
-		BrandId: uint32(goodsForm.Brand),
+		BrandId:         uint32(goodsForm.Brand),
 	}); err != nil {
 		HandleGrpcErrorToHttp(err, c)
 		return
 	}
-
 
 	c.JSON(http.StatusOK, gin.H{
 		"msg": "更新成功",
