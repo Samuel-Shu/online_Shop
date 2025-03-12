@@ -22,13 +22,16 @@ func main() {
 	//初始化路由
 	router := initialize.Router()
 	//初始化翻译器
-	err:= initialize.InitTrans("zh")
+	err := initialize.InitTrans("zh")
 	if err != nil {
 		panic(err)
 	}
 
 	//初始化srv连接
 	initialize.InitSrvConn()
+
+	//初始化sentinel
+	initialize.InitSentinel()
 
 	viper.AutomaticEnv()
 	debug := viper.GetBool("ONLINE_SHOP_DEBUG")
@@ -60,7 +63,7 @@ func main() {
 	//接收终止信号
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<- quit
+	<-quit
 	err = registerClient.DeRegister(serviceId)
 	if err != nil {
 		zap.S().Info("服务注销失败", err.Error())
