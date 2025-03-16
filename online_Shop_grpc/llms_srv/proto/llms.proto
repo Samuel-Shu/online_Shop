@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+service llms {
+  rpc UploadFile (UploadFileRequest) returns (UploadFileResponse); // 上传excel文件，用于构建本地知识库
+  rpc SendMessage (ChatMessageRequest) returns (ChatMessageResponse); // 聊天接口
+  rpc HealthCheck (EmptyWithLlms) returns (HealthCheckResponse); // 健康检查接口 （success || false）
+}
+
+message EmptyWithLlms {
+}
+
+message HealthCheckResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message UploadFileRequest {
+  string filename = 1;
+  bytes file_content = 2;
+}
+
+message UploadFileResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ChatMessageRequest {
+  string sender = 1;
+  map<string, string> metadata = 2;
+  string content = 3;
+}
+
+message ChatMessageResponse {
+  bool success = 1;
+  string message = 2;
+}

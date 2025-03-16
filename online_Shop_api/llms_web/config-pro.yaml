@@ -1,0 +1,7 @@
+host: '192.168.220.128'
+port: 8848
+namespace: 'f4374967-03bf-4ea8-b10d-a3af71d6f071'
+user: 'nacos'
+password: 'nacos'
+dataid: 'llms-web.json'
+group: 'pro'

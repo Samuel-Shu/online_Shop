@@ -1,0 +1,22 @@
+syntax = "proto3";
+option go_package = ".;proto";
+
+service Inventory{
+  rpc SetInv (GoodsInvInfo) returns (MyEmptyWithInv); //设置库存
+  rpc InvDetail (GoodsInvInfo) returns (GoodsInvInfo); //获取库存信息
+  //买东西的时候习惯从购物车中去买，此时对于批量商品的库存问题，最好采用事务（同时成功或者回滚）
+  rpc Sell (SellInfo) returns (MyEmptyWithInv); //库存扣减
+  rpc Reback (SellInfo) returns (MyEmptyWithInv); //库存归还
+
+}
+
+message MyEmptyWithInv {
+}
+
+message GoodsInvInfo {
+  int32 goodsId = 1;
+  int32 num = 2;
+}
+message SellInfo {
+  repeated GoodsInvInfo goodsInfo = 1;
+}
